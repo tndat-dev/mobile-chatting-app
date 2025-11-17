@@ -1,0 +1,1 @@
+/home/tndat/AndroidStudioProjects/MyApplication/app/src/main/cpp/CMakeLists.txt

@@ -1,0 +1,16 @@
+nohup: ignoring input
+[PERSISTENCE] Loaded 1 users, next_id=2
+[C++ SERVER] Listening on 0.0.0.0:8080
+[C++ SERVER] Client connected from 127.0.0.1:35052
+[C++ SERVER] handle_client started for fd=4
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully

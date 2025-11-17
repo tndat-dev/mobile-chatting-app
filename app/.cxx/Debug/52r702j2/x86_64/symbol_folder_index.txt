@@ -1,0 +1,1 @@
+/home/tndat/AndroidStudioProjects/MyApplication/app/build/intermediates/cxx/Debug/52r702j2/obj/x86_64

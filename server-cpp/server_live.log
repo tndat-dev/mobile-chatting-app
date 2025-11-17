@@ -1,0 +1,168 @@
+nohup: ignoring input
+[PERSISTENCE] Loaded 2 users, next_id=3
+[C++ SERVER] Listening on 0.0.0.0:8080
+[C++ SERVER] Client connected from 127.0.0.1:40634
+[C++ SERVER] handle_client started for fd=4
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:33242
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:35170
+[C++ SERVER] handle_client started for fd=4
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=12
+[C++ SERVER] Received payload: 12 bytes
+[C++ SERVER] Payload: username=dat
+[DEBUG] FRIEND_REQUEST: userId=2 -> targetId=1, stored successfully
+[DEBUG] targetUserId=1 is NOT online, friend request will be delivered on next login
+[LOG] userId=2 action=FRIEND_REQUEST details=to_userId=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=19
+[C++ SERVER] Response payload: Friend request sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:36338
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Connection closed or error, fd=5
+[C++ SERVER] Client connected from 127.0.0.1:49020
+[C++ SERVER] handle_client started for fd=4
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:53402
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:50796
+[C++ SERVER] handle_client started for fd=4
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=12
+[C++ SERVER] Received payload: 12 bytes
+[C++ SERVER] Payload: username=dat
+[C++ SERVER] Sending response: type=241 (ERROR), userId=2, payload_len=27
+[C++ SERVER] Response payload: Friend request already sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:33068
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Connection closed or error, fd=5
+[C++ SERVER] Client connected from 127.0.0.1:35996
+[C++ SERVER] handle_client started for fd=4
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=65
+[C++ SERVER] Response payload: count=2&id0=1&name0=dat&isFriend0=0&id1=2&name1=alice&isFriend1=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=65
+[C++ SERVER] Response payload: count=2&id0=1&name0=dat&isFriend0=0&id1=2&name1=alice&isFriend1=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=14
+[C++ SERVER] Received payload: 14 bytes
+[C++ SERVER] Payload: username=alice
+[DEBUG] FRIEND_REQUEST: userId=0 -> targetId=2, stored successfully
+[DEBUG] targetUserId=2 is NOT online, friend request will be delivered on next login
+[LOG] userId=0 action=FRIEND_REQUEST details=to_userId=2
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=19
+[C++ SERVER] Response payload: Friend request sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:37386
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[DEBUG] Delivering 1 pending friend requests to userId=2
+[C++ SERVER] Sending response: type=16 (OTHER), userId=0, payload_len=31
+[C++ SERVER] Response payload: fromUserId=0&fromUsername=User0
+[C++ SERVER] Response sent successfully

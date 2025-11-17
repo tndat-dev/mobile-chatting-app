@@ -1,0 +1,1680 @@
+nohup: ignoring input
+[PERSISTENCE] Connected to PostgreSQL successfully
+[C++ SERVER] Connected to PostgreSQL successfully
+[C++ SERVER] Loaded user: alice (id=2, 0 friends)
+[C++ SERVER] Loaded user: dat (id=1, 0 friends)
+[C++ SERVER] Loaded 2 users from database
+[C++ SERVER] Listening on 0.0.0.0:8080
+[C++ SERVER] Client connected from 127.0.0.1:59914
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=65
+[C++ SERVER] Response payload: count=2&id0=1&name0=dat&isFriend0=0&id1=2&name1=alice&isFriend1=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=14
+[C++ SERVER] Received payload: 14 bytes
+[C++ SERVER] Payload: username=alice
+[PERSISTENCE] Query failed: ERROR:  insert or update on table "friend_requests" violates foreign key constraint "friend_requests_from_user_id_fkey"
+DETAIL:  Key (from_user_id)=(0) is not present in table "users".
+
+[PERSISTENCE] Query: INSERT INTO friend_requests (from_user_id, to_user_id, status) VALUES (0, 2, 'PENDING') ON CONFLICT (from_user_id, to_user_id) DO UPDATE SET status = 'PENDING', updated_at = NOW()
+[C++ SERVER] Sending response: type=241 (ERROR), userId=0, payload_len=29
+[C++ SERVER] Response payload: Failed to send friend request
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=65
+[C++ SERVER] Response payload: count=2&id0=1&name0=dat&isFriend0=0&id1=2&name1=alice&isFriend1=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=14
+[C++ SERVER] Received payload: 14 bytes
+[C++ SERVER] Payload: username=alice
+[PERSISTENCE] Query failed: ERROR:  insert or update on table "friend_requests" violates foreign key constraint "friend_requests_from_user_id_fkey"
+DETAIL:  Key (from_user_id)=(0) is not present in table "users".
+
+[PERSISTENCE] Query: INSERT INTO friend_requests (from_user_id, to_user_id, status) VALUES (0, 2, 'PENDING') ON CONFLICT (from_user_id, to_user_id) DO UPDATE SET status = 'PENDING', updated_at = NOW()
+[C++ SERVER] Sending response: type=241 (ERROR), userId=0, payload_len=29
+[C++ SERVER] Response payload: Failed to send friend request
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=65
+[C++ SERVER] Response payload: count=2&id0=1&name0=dat&isFriend0=0&id1=2&name1=alice&isFriend1=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=14
+[C++ SERVER] Received payload: 14 bytes
+[C++ SERVER] Payload: username=alice
+[PERSISTENCE] Query failed: ERROR:  insert or update on table "friend_requests" violates foreign key constraint "friend_requests_from_user_id_fkey"
+DETAIL:  Key (from_user_id)=(0) is not present in table "users".
+
+[PERSISTENCE] Query: INSERT INTO friend_requests (from_user_id, to_user_id, status) VALUES (0, 2, 'PENDING') ON CONFLICT (from_user_id, to_user_id) DO UPDATE SET status = 'PENDING', updated_at = NOW()
+[C++ SERVER] Sending response: type=241 (ERROR), userId=0, payload_len=29
+[C++ SERVER] Response payload: Failed to send friend request
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Connection closed or error, fd=5
+[C++ SERVER] Client connected from 127.0.0.1:41628
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:41636
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (16, USER_ONLINE, 1, null, , null, 2025-11-16 23:34:45.28992).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:34240
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (17, USER_ONLINE, 2, null, , null, 2025-11-16 23:35:00.295732).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[DEBUG] Delivering 1 pending friend requests to userId=2
+[C++ SERVER] Sending response: type=16 (OTHER), userId=1, payload_len=29
+[C++ SERVER] Response payload: fromUserId=1&fromUsername=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=46
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=1&req_name0=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=46
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=1&req_name0=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=46
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=1&req_name0=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=18 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=1
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (18, FRIEND_REQUEST_DECLINE, 2, 1, , null, 2025-11-16 23:35:06.440127).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_DECLINE', 2, 1, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=23
+[C++ SERVER] Response payload: Friend request declined
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:47068
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (19, USER_ONLINE, 1, null, , null, 2025-11-16 23:35:15.62713).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=18 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (20, FRIEND_REQUEST_DECLINE, 1, 2, , null, 2025-11-16 23:35:18.063042).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_DECLINE', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request declined
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:39998
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (21, USER_ONLINE, 1, null, , null, 2025-11-16 23:35:30.672574).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=37
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&isFriend0=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=14
+[C++ SERVER] Received payload: 14 bytes
+[C++ SERVER] Payload: username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (22, FRIEND_REQUEST_SEND, 1, 2, , null, 2025-11-16 23:35:35.772761).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_SEND', 1, 2, '')
+[DEBUG] FRIEND_REQUEST: userId=1 -> targetId=2, stored successfully
+[DEBUG] targetUserId=2 is NOT online, friend request will be delivered on next login
+[LOG] userId=1 action=FRIEND_REQUEST details=to_userId=2
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=19
+[C++ SERVER] Response payload: Friend request sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:33604
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (23, USER_ONLINE, 2, null, , null, 2025-11-16 23:35:49.222496).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[DEBUG] Delivering 1 pending friend requests to userId=2
+[C++ SERVER] Sending response: type=16 (OTHER), userId=1, payload_len=29
+[C++ SERVER] Response payload: fromUserId=1&fromUsername=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=46
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=1&req_name0=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=46
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=1&req_name0=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=46
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=1&req_name0=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=1
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (24, FRIEND_ADD, 1, 2, , null, 2025-11-16 23:35:52.834116).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (25, FRIEND_REQUEST_ACCEPT, 2, 1, , null, 2025-11-16 23:35:52.837387).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 2, 1, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=62
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=1&req_id0=1&req_name0=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=1
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (26, FRIEND_ADD, 1, 2, , null, 2025-11-16 23:36:27.466628).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (27, FRIEND_REQUEST_ACCEPT, 2, 1, , null, 2025-11-16 23:36:27.468037).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 2, 1, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=62
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=1&req_id0=1&req_name0=dat
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=18 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=1
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (28, FRIEND_REQUEST_DECLINE, 2, 1, , null, 2025-11-16 23:36:34.009611).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_DECLINE', 2, 1, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=23
+[C++ SERVER] Response payload: Friend request declined
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:39520
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (29, USER_ONLINE, 1, null, , null, 2025-11-16 23:37:01.447704).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:38112
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (30, USER_ONLINE, 2, null, , null, 2025-11-16 23:37:33.358724).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=19 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=10
+[C++ SERVER] Response payload: Unfriended
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:34748
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (31, USER_ONLINE, 1, null, , null, 2025-11-16 23:37:43.731986).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:34928
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (32, USER_ONLINE, 2, null, , null, 2025-11-16 23:37:57.879781).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=12
+[C++ SERVER] Received payload: 12 bytes
+[C++ SERVER] Payload: username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (33, FRIEND_REQUEST_SEND, 2, 1, , null, 2025-11-16 23:38:00.948827).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_SEND', 2, 1, '')
+[DEBUG] FRIEND_REQUEST: userId=2 -> targetId=1, stored successfully
+[DEBUG] targetUserId=1 is NOT online, friend request will be delivered on next login
+[LOG] userId=2 action=FRIEND_REQUEST details=to_userId=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=19
+[C++ SERVER] Response payload: Friend request sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:40878
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (34, USER_ONLINE, 1, null, , null, 2025-11-16 23:38:10.133286).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (35, FRIEND_ADD, 1, 2, , null, 2025-11-16 23:38:12.267216).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (36, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-16 23:38:12.271726).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (37, FRIEND_ADD, 1, 2, , null, 2025-11-16 23:38:29.595608).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (38, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-16 23:38:29.596428).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=32 length=27
+[C++ SERVER] Received payload: 27 bytes
+[C++ SERVER] Payload: message=hello&recipientId=2
+[LOG] userId=1 action=DIRECT_MESSAGE details=to_userId=2
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=12
+[C++ SERVER] Response payload: Message sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=32 length=27
+[C++ SERVER] Received payload: 27 bytes
+[C++ SERVER] Payload: message=hello&recipientId=2
+[LOG] userId=1 action=DIRECT_MESSAGE details=to_userId=2
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=12
+[C++ SERVER] Response payload: Message sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=32 length=27
+[C++ SERVER] Received payload: 27 bytes
+[C++ SERVER] Payload: message=hello&recipientId=2
+[LOG] userId=1 action=DIRECT_MESSAGE details=to_userId=2
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=12
+[C++ SERVER] Response payload: Message sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=18 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (39, FRIEND_REQUEST_DECLINE, 1, 2, , null, 2025-11-16 23:40:01.208372).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_DECLINE', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request declined
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=32 length=27
+[C++ SERVER] Received payload: 27 bytes
+[C++ SERVER] Payload: message=hello&recipientId=2
+[LOG] userId=1 action=DIRECT_MESSAGE details=to_userId=2
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=12
+[C++ SERVER] Response payload: Message sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Connection closed or error, fd=6
+[C++ SERVER] Client connected from 127.0.0.1:43970
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:41360
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (40, USER_ONLINE, 2, null, , null, 2025-11-16 23:53:15.733287).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Sending response: type=32 (OTHER), userId=1, payload_len=45
+[C++ SERVER] Response payload: senderId=1&message=hello&timestamp=1763311115
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Sending response: type=32 (OTHER), userId=1, payload_len=45
+[C++ SERVER] Response payload: senderId=1&message=hello&timestamp=1763311127
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Sending response: type=32 (OTHER), userId=1, payload_len=45
+[C++ SERVER] Response payload: senderId=1&message=hello&timestamp=1763311177
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Sending response: type=32 (OTHER), userId=1, payload_len=45
+[C++ SERVER] Response payload: senderId=1&message=hello&timestamp=1763311205
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=1
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=1
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=1
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Connection closed or error, fd=6
+[C++ SERVER] Client connected from 127.0.0.1:46714
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:36050
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (41, USER_ONLINE, 2, null, , null, 2025-11-16 23:58:34.993398).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=1
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=19 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=10
+[C++ SERVER] Response payload: Unfriended
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=12
+[C++ SERVER] Received payload: 12 bytes
+[C++ SERVER] Payload: username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (42, FRIEND_REQUEST_SEND, 2, 1, , null, 2025-11-16 23:58:42.33414).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_SEND', 2, 1, '')
+[DEBUG] FRIEND_REQUEST: userId=2 -> targetId=1, stored successfully
+[DEBUG] targetUserId=1 is NOT online, friend request will be delivered on next login
+[LOG] userId=2 action=FRIEND_REQUEST details=to_userId=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=19
+[C++ SERVER] Response payload: Friend request sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:32884
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (43, USER_ONLINE, 1, null, , null, 2025-11-16 23:58:54.282349).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (44, FRIEND_ADD, 1, 2, , null, 2025-11-16 23:58:57.896342).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (45, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-16 23:58:57.898932).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=32 length=27
+[C++ SERVER] Received payload: 27 bytes
+[C++ SERVER] Payload: message=hello&recipientId=2
+[LOG] userId=1 action=DIRECT_MESSAGE details=to_userId=2
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=12
+[C++ SERVER] Response payload: Message sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (46, FRIEND_ADD, 1, 2, , null, 2025-11-16 23:59:14.02437).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (47, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-16 23:59:14.025538).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:53810
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (48, USER_ONLINE, 1, null, , null, 2025-11-17 00:01:12.728726).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:54428
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (49, USER_ONLINE, 2, null, , null, 2025-11-17 00:01:32.95487).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Sending response: type=32 (OTHER), userId=1, payload_len=45
+[C++ SERVER] Response payload: senderId=1&message=hello&timestamp=1763312348
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=32 length=27
+[C++ SERVER] Received payload: 27 bytes
+[C++ SERVER] Payload: message=hello&recipientId=1
+[LOG] userId=2 action=DIRECT_MESSAGE details=to_userId=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=12
+[C++ SERVER] Response payload: Message sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Connection closed or error, fd=5
+[C++ SERVER] Client connected from 127.0.0.1:56560
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=0, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:42698
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (50, USER_ONLINE, 2, null, , null, 2025-11-17 00:05:05.217206).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=38
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:33454
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (51, USER_ONLINE, 1, null, , null, 2025-11-17 00:05:16.556325).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Sending response: type=32 (OTHER), userId=2, payload_len=45
+[C++ SERVER] Response payload: senderId=2&message=hello&timestamp=1763312506
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (52, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:05:20.143963).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (53, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:05:20.145391).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (54, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:05:21.029197).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (55, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:05:21.030494).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (56, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:05:21.34252).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (57, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:05:21.345123).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (58, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:05:21.623105).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (59, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:05:21.624301).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (60, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:05:21.922919).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (61, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:05:21.924162).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (62, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:05:22.17508).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (63, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:05:22.176752).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (64, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:05:28.996149).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (65, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:05:28.998349).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (66, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:05:29.977756).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (67, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:05:29.985975).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=18 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (68, FRIEND_REQUEST_DECLINE, 1, 2, , null, 2025-11-17 00:05:33.634248).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_DECLINE', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request declined
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=40
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=19 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=10
+[C++ SERVER] Response payload: Unfriended
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:56796
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (69, USER_ONLINE, 1, null, , null, 2025-11-17 00:05:50.475694).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=1 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:46220
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (70, USER_ONLINE, 2, null, , null, 2025-11-17 00:06:09.734561).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=12
+[C++ SERVER] Received payload: 12 bytes
+[C++ SERVER] Payload: username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (71, FRIEND_REQUEST_SEND, 2, 1, , null, 2025-11-17 00:06:16.004642).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_SEND', 2, 1, '')
+[DEBUG] FRIEND_REQUEST: userId=2 -> targetId=1, stored successfully
+[DEBUG] targetUserId=1 is NOT online, friend request will be delivered on next login
+[LOG] userId=2 action=FRIEND_REQUEST details=to_userId=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=19
+[C++ SERVER] Response payload: Friend request sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:59490
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=88
+[C++ SERVER] Received payload: 88 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=alice
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (72, USER_ONLINE, 2, null, , null, 2025-11-17 00:06:30.354473).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 2, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=53
+[C++ SERVER] Response payload: success=true&userId=2&token=demo_token&username=alice
+[C++ SERVER] Response sent successfully
+[LOG] userId=2 action=LOGIN details=username=alice
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=5 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=35
+[C++ SERVER] Response payload: count=1&id0=1&name0=dat&isFriend0=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=16 length=12
+[C++ SERVER] Received payload: 12 bytes
+[C++ SERVER] Payload: username=dat
+[C++ SERVER] Sending response: type=241 (ERROR), userId=2, payload_len=27
+[C++ SERVER] Response payload: Friend request already sent
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=2, pendingCount=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=22
+[C++ SERVER] Response payload: count=0&pendingCount=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=3 length=0
+[LOG] userId=2 action=LOGOUT
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=2, payload_len=0
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Client connected from 127.0.0.1:39462
+[C++ SERVER] handle_client started for fd=6
+[C++ SERVER] Received: magic=0x43484154 version=1 type=2 length=86
+[C++ SERVER] Received payload: 86 bytes
+[C++ SERVER] Payload: password=c273fa7505428a152554ab1248060934d8398ee3c5097410c92e4a4cf6986011&username=dat
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (73, USER_ONLINE, 1, null, , null, 2025-11-17 00:06:50.279991).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('USER_ONLINE', 1, NULL, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=51
+[C++ SERVER] Response payload: success=true&userId=1&token=demo_token&username=dat
+[C++ SERVER] Response sent successfully
+[LOG] userId=1 action=LOGIN details=username=dat
+[DEBUG] Delivering 1 pending friend requests to userId=1
+[C++ SERVER] Sending response: type=16 (OTHER), userId=2, payload_len=31
+[C++ SERVER] Response payload: fromUserId=2&fromUsername=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=48
+[C++ SERVER] Response payload: count=0&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=17 length=8
+[C++ SERVER] Received payload: 8 bytes
+[C++ SERVER] Payload: userId=2
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (74, FRIEND_ADD, 1, 2, , null, 2025-11-17 00:06:54.77526).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_ADD', 1, 2, '')
+[PERSISTENCE] Query failed: ERROR:  null value in column "timestamp" of relation "activity_logs" violates not-null constraint
+DETAIL:  Failing row contains (75, FRIEND_REQUEST_ACCEPT, 1, 2, , null, 2025-11-17 00:06:54.78317).
+
+[PERSISTENCE] Query: INSERT INTO activity_logs (log_type, user_id, target_user_id, details) VALUES ('FRIEND_REQUEST_ACCEPT', 1, 2, '')
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=23
+[C++ SERVER] Response payload: Friend request accepted
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Received: magic=0x43484154 version=1 type=20 length=0
+[DEBUG] GET_FRIENDS_LIST for userId=1, pendingCount=1
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=1, payload_len=66
+[C++ SERVER] Response payload: count=1&id0=2&name0=alice&pendingCount=1&req_id0=2&req_name0=alice
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Connection closed or error, fd=6

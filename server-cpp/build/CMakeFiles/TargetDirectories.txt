@@ -1,0 +1,3 @@
+/home/tndat/AndroidStudioProjects/MyApplication/server-cpp/build/CMakeFiles/chat_server.dir
+/home/tndat/AndroidStudioProjects/MyApplication/server-cpp/build/CMakeFiles/edit_cache.dir
+/home/tndat/AndroidStudioProjects/MyApplication/server-cpp/build/CMakeFiles/rebuild_cache.dir
