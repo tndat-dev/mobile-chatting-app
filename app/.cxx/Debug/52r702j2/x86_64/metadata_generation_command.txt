@@ -1,4 +1,4 @@
-                        -H/home/tndat/AndroidStudioProjects/MyApplication/app/src/main/cpp
+                        -H/home/tndat/mobile-chatting-app/app/src/main/cpp
 -DCMAKE_SYSTEM_NAME=Android
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 -DCMAKE_SYSTEM_VERSION=24
@@ -10,10 +10,10 @@
 -DCMAKE_TOOLCHAIN_FILE=/home/tndat/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake
 -DCMAKE_MAKE_PROGRAM=/home/tndat/Android/Sdk/cmake/3.22.1/bin/ninja
 -DCMAKE_CXX_FLAGS=-std=c++17
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/tndat/AndroidStudioProjects/MyApplication/app/build/intermediates/cxx/Debug/52r702j2/obj/x86_64
--DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/tndat/AndroidStudioProjects/MyApplication/app/build/intermediates/cxx/Debug/52r702j2/obj/x86_64
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/tndat/mobile-chatting-app/app/build/intermediates/cxx/Debug/52r702j2/obj/x86_64
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/tndat/mobile-chatting-app/app/build/intermediates/cxx/Debug/52r702j2/obj/x86_64
 -DCMAKE_BUILD_TYPE=Debug
--B/home/tndat/AndroidStudioProjects/MyApplication/app/.cxx/Debug/52r702j2/x86_64
+-B/home/tndat/mobile-chatting-app/app/.cxx/Debug/52r702j2/x86_64
 -GNinja
 -DANDROID_STL=c++_shared
                         Build command args: []
