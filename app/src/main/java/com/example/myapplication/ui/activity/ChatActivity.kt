@@ -64,6 +64,9 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
+        // Load conversation history from server
+        chatViewModel.loadConversationHistory(friendId)
+        
         // Quan sát tin nhắn từ Room để hiển thị lịch sử bền vững
         chatViewModel.getMessages(myUserId, friendId).observe(this) { list ->
             messagesList.clear()
@@ -91,7 +94,10 @@ class ChatActivity : AppCompatActivity() {
                     when (messageType) {
                         NetworkManager.MessageType.DIRECT_MESSAGE -> handleIncomingMessage(payload)
                         NetworkManager.MessageType.SUCCESS -> {
-                            // Message sent successfully
+                            // Check if this is conversation history response
+                            if (payload.contains("count=")) {
+                                handleConversationHistory(payload)
+                            }
                         }
                         NetworkManager.MessageType.ERROR -> {
                             Toast.makeText(this@ChatActivity, "Error: $payload", Toast.LENGTH_SHORT).show()
@@ -131,6 +137,30 @@ class ChatActivity : AppCompatActivity() {
         if (senderId == friendId) {
             val tsMillis = if (timestamp < 2000000000L) timestamp * 1000 else timestamp
             chatViewModel.receiveMessage(senderId, message, tsMillis)
+        }
+    }
+    
+    private fun handleConversationHistory(payload: String) {
+        val pairs = payload.split("&").mapNotNull {
+            val parts = it.split("=", limit = 2)
+            if (parts.size == 2) parts[0] to parts[1] else null
+        }.toMap()
+        
+        val count = pairs["count"]?.toIntOrNull() ?: 0
+        
+        for (i in 0 until count) {
+            val fromUserId = pairs["from$i"]?.toIntOrNull() ?: continue
+            val toUserId = pairs["to$i"]?.toIntOrNull() ?: continue
+            val content = pairs["content$i"] ?: continue
+            val timestamp = pairs["timestamp$i"]?.toLongOrNull() ?: continue
+            
+            // Save historical messages to Room database
+            // Server sends from->to, we need to save as senderId->recipientId correctly
+            chatViewModel.receiveMessage(fromUserId, content, timestamp, recipientId = toUserId)
+        }
+        
+        if (count > 0) {
+            Toast.makeText(this, "Loaded $count messages from history", Toast.LENGTH_SHORT).show()
         }
     }
     

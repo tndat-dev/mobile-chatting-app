@@ -1,8 +1,7 @@
 # ninja log v5
-1	343	1764382254681422856	CMakeFiles/chatapp.dir/protocol_handler.cpp.o	15c0a3642e77d23
-1	453	1764382254791418524	CMakeFiles/chatapp.dir/crypto_utils.cpp.o	2bf09e8dcb56811c
-0	481	1764382254819417421	CMakeFiles/chatapp.dir/native-lib.cpp.o	c6af1c05bcecda2a
-1	734	1764382255071407498	CMakeFiles/chatapp.dir/socket_manager.cpp.o	70cc3a38990fd618
-1	862	1764382255197402542	CMakeFiles/chatapp.dir/message_serializer.cpp.o	cf6011e99dbf87bf
-862	887	1764382255227401362	/home/tndat/mobile-chatting-app/app/build/intermediates/cxx/Debug/52r702j2/obj/x86_64/libchatapp.so	5b5b4e2804113b87
-4	27	1764383899675795414	/home/tndat/mobile-chatting-app/app/build/intermediates/cxx/Debug/52r702j2/obj/x86_64/libchatapp.so	5b5b4e2804113b87
+1	482	1764387420756100214	CMakeFiles/chatapp.dir/protocol_handler.cpp.o	15c0a3642e77d23
+1	575	1764387420847046982	CMakeFiles/chatapp.dir/message_serializer.cpp.o	cf6011e99dbf87bf
+0	664	1764387420935733422	CMakeFiles/chatapp.dir/native-lib.cpp.o	c6af1c05bcecda2a
+0	680	1764387420952625933	CMakeFiles/chatapp.dir/socket_manager.cpp.o	70cc3a38990fd618
+1	889	1764387421161022265	CMakeFiles/chatapp.dir/crypto_utils.cpp.o	2bf09e8dcb56811c
+889	906	1764387421180810405	/home/tndat/mobile-chatting-app/app/build/intermediates/cxx/Debug/52r702j2/obj/x86_64/libchatapp.so	5b5b4e2804113b87

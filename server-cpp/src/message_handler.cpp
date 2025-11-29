@@ -108,7 +108,20 @@ void handle_client(int client_fd, sockaddr_in addr) {
           break;
         }
         
-        int uid = g_next_user_id++;
+        int uid;
+        
+        // Save to database first to get proper ID
+        if (g_pg_persistence) {
+          if (!g_pg_persistence->create_user(username, password, phone, uid)) {
+            send_message(client_fd, proto::ERROR, "Failed to create user in database", 0);
+            break;
+          }
+          g_pg_persistence->update_user_online_status(uid, true);
+        } else {
+          uid = g_next_user_id++;
+          persistence::save_users(g_users_by_name);
+        }
+        
         data::User u;
         u.id = uid;
         u.username = username;
@@ -125,13 +138,9 @@ void handle_client(int client_fd, sockaddr_in addr) {
         current_user_id = uid;
         g_online_clients[uid] = client_fd;
         
-        // Save to database if available
-        if (g_pg_persistence) {
-          int new_id;
-          g_pg_persistence->create_user(username, password, phone, new_id);
-          g_pg_persistence->update_user_online_status(uid, true);
-        } else {
-          persistence::save_users(g_users_by_name);
+        // Update g_next_user_id to avoid conflicts
+        if (uid >= g_next_user_id) {
+          g_next_user_id = uid + 1;
         }
         
         log_activity("REGISTER", uid, "username=" + username);
@@ -571,10 +580,17 @@ void handle_client(int client_fd, sockaddr_in addr) {
         int recipientId = std::stoi(kv["recipientId"]);
         std::string message = kv["message"];
         
+        long long timestamp = time(nullptr) * 1000; // milliseconds
+        
+        // Save message to database
+        if (g_pg_persistence) {
+          g_pg_persistence->save_message(current_user_id, recipientId, message, timestamp);
+        }
+        
         auto out = serialize_kv({
           {"senderId", std::to_string((int)current_user_id)},
           {"message", message},
-          {"timestamp", std::to_string((long long)time(nullptr))}
+          {"timestamp", std::to_string(timestamp / 1000)} // send as seconds
         });
         
         int target_fd = -1;
@@ -593,6 +609,28 @@ void handle_client(int client_fd, sockaddr_in addr) {
         log_activity("DIRECT_MESSAGE", current_user_id, 
                     "to_userId=" + std::to_string(recipientId));
         send_message(client_fd, proto::SUCCESS, "Message sent", current_user_id);
+        break;
+      }
+      
+      case proto::GET_CONVERSATION_HISTORY: {
+        auto kv = parse_kv(payload);
+        int otherUserId = std::stoi(kv["otherUserId"]);
+        int limit = kv.count("limit") ? std::stoi(kv["limit"]) : 50;
+        
+        auto messages = g_pg_persistence->get_conversation((int)current_user_id, otherUserId, limit);
+        
+        std::vector<std::pair<std::string, std::string>> items;
+        items.push_back(std::make_pair("count", std::to_string(messages.size())));
+        
+        for (size_t i = 0; i < messages.size(); i++) {
+          auto& msg = messages[messages.size() - 1 - i]; // Reverse to chronological order
+          items.push_back(std::make_pair("from" + std::to_string(i), std::to_string(msg.from_user_id)));
+          items.push_back(std::make_pair("to" + std::to_string(i), std::to_string(msg.to_user_id)));
+          items.push_back(std::make_pair("content" + std::to_string(i), msg.content));
+          items.push_back(std::make_pair("timestamp" + std::to_string(i), std::to_string(msg.timestamp)));
+        }
+        
+        send_message(client_fd, proto::SUCCESS, serialize_kv(items), current_user_id);
         break;
       }
       

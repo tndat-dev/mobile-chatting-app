@@ -18,7 +18,7 @@ interface MessageDao {
     @Query("SELECT * FROM messages WHERE isSent = 0 OR isDelivered = 0")
     suspend fun getPendingMessages(): List<Message>
     
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMessage(message: Message): Long
     
     @Update

@@ -10,9 +10,9 @@ Change local.properties sdk path
 ./gradlew installDebug && adb shell am start -n com.example.myapplication/.MainActivity
 
 
-cd /home/tndat/Downloads/mobile-chatting-app/server-cpp && rm -rf build && mkdir build && cd build && cmake .. && make
+cd /home/tndat/mobile-chatting-app/server-cpp && rm -rf build && mkdir build && cd build && cmake .. && make
 
-adb uninstall com.example.myapplication 2>/dev/null; cd /home/tndat/Downloads/mobile-chatting-app && ./gradlew installDebug && adb shell am start -n com.example.myapplication/.ui.activity.LoginActivity
+adb uninstall com.example.myapplication 2>/dev/null; cd /home/tndat/mobile-chatting-app && ./gradlew installDebug && adb shell am start -n com.example.myapplication/.ui.activity.LoginActivity
 
 
-cd /home/tndat/Downloads/mobile-chatting-app/server-cpp/build && ./chat_server
+cd /home/tndat/mobile-chatting-app/server-cpp/build && ./chat_server

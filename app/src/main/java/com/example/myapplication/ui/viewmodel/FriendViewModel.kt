@@ -29,6 +29,7 @@ class FriendViewModel(application: Application) : AndroidViewModel(application) 
         database.friendRequestDao(),
         database.groupDao(),
         database.groupMemberDao(),
+        database.conversationDao(),
         networkManager
     )
     

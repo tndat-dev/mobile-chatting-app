@@ -76,32 +76,25 @@ class MainActivity : AppCompatActivity(), NetworkManager.MessageCallback {
             when (item.itemId) {
                 R.id.nav_chats -> {
                     loadFragment(ChatsFragment())
-                    binding.fabNewChat.visibility = android.view.View.VISIBLE
                     true
                 }
                 R.id.nav_friends -> {
                     loadFragment(FriendsFragment())
-                    binding.fabNewChat.visibility = android.view.View.GONE
                     true
                 }
                 R.id.nav_groups -> {
                     loadFragment(GroupsFragment())
-                    binding.fabNewChat.visibility = android.view.View.GONE
                     true
                 }
                 R.id.nav_profile -> {
                     loadFragment(ProfileFragment())
-                    binding.fabNewChat.visibility = android.view.View.GONE
                     true
                 }
                 else -> false
             }
         }
         
-        binding.fabNewChat.setOnClickListener {
-            // Simple toast for now
-            Toast.makeText(this, "Add friend feature", Toast.LENGTH_SHORT).show()
-        }
+        // '+' action button removed per request
     }
     
     private fun loadFragment(fragment: Fragment) {

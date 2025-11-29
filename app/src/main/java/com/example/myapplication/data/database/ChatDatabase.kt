@@ -29,6 +29,7 @@ abstract class ChatDatabase : RoomDatabase() {
     abstract fun friendRequestDao(): FriendRequestDao
     abstract fun groupDao(): GroupDao
     abstract fun groupMemberDao(): GroupMemberDao
+    abstract fun conversationDao(): ConversationDao
     
     companion object {
         @Volatile

@@ -25,6 +25,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         database.friendRequestDao(),
         database.groupDao(),
         database.groupMemberDao(),
+        database.conversationDao(),
         networkManager
     )
     
@@ -52,6 +53,8 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     fun getGroupMessages(groupId: Int): LiveData<List<Message>> {
         return repository.getGroupMessages(groupId)
     }
+
+    fun getChatConversations() = repository.getChatConversations()
     
     fun sendMessage(recipientId: Int, content: String) {
         viewModelScope.launch {
@@ -93,9 +96,20 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun receiveMessage(senderId: Int, content: String, timestamp: Long, groupId: Int? = null) {
+    fun receiveMessage(senderId: Int, content: String, timestamp: Long, groupId: Int? = null, recipientId: Int? = null) {
         viewModelScope.launch {
-            repository.receiveMessage(senderId, content, timestamp, groupId)
+            repository.receiveMessage(senderId, content, timestamp, groupId, recipientId)
+        }
+    }
+    
+    fun loadConversationHistory(otherUserId: Int) {
+        viewModelScope.launch {
+            try {
+                networkManager.getConversationHistory(otherUserId, 100)
+                logger.log(ActivityLogger.LogLevel.INFO, "CHAT", "Requested conversation history with user $otherUserId")
+            } catch (e: Exception) {
+                logger.logError("CHAT", "Error loading conversation history", e)
+            }
         }
     }
 }

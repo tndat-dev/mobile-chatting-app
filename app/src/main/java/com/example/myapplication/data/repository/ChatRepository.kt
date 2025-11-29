@@ -15,6 +15,7 @@ class ChatRepository(
     private val friendRequestDao: FriendRequestDao,
     private val groupDao: GroupDao,
     private val groupMemberDao: GroupMemberDao,
+    private val conversationDao: ConversationDao,
     private val networkManager: NetworkManager
 ) {
     
@@ -29,6 +30,10 @@ class ChatRepository(
     
     fun getGroupMessages(groupId: Int): LiveData<List<Message>> {
         return messageDao.getGroupMessages(groupId)
+    }
+
+    fun getChatConversations(): LiveData<List<ChatConversation>> {
+        return conversationDao.getChatConversations(networkManager.getUserId())
     }
     
     suspend fun sendMessage(recipientId: Int, content: String): Boolean = withContext(Dispatchers.IO) {
@@ -80,12 +85,12 @@ class ChatRepository(
         }
     }
     
-    suspend fun receiveMessage(senderId: Int, content: String, timestamp: Long, groupId: Int? = null) {
+    suspend fun receiveMessage(senderId: Int, content: String, timestamp: Long, groupId: Int? = null, recipientId: Int? = null) {
         withContext(Dispatchers.IO) {
             try {
                 val message = Message(
                     senderId = senderId,
-                    recipientId = networkManager.getUserId(),
+                    recipientId = recipientId ?: networkManager.getUserId(),
                     groupId = groupId,
                     content = content,
                     timestamp = timestamp,

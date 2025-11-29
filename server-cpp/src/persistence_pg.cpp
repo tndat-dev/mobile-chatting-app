@@ -454,8 +454,8 @@ bool PostgresPersistence::save_message(int from_user_id, int to_user_id,
                      "timestamp, is_read) VALUES ("
                      + std::to_string(from_user_id) + ", "
                      + std::to_string(to_user_id) + ", '"
-                     + escape_string(content) + "', to_timestamp("
-                     + std::to_string(timestamp / 1000.0) + "), FALSE)";
+                     + escape_string(content) + "', "
+                     + std::to_string(timestamp) + ", FALSE)";
   
   PGresult* res = db->execute(query);
   if (!res) {
@@ -472,7 +472,7 @@ std::vector<data::Message> PostgresPersistence::get_conversation(int user_id_1,
   std::vector<data::Message> messages;
   
   std::string query = "SELECT id, from_user_id, to_user_id, content, "
-                     "(EXTRACT(EPOCH FROM timestamp) * 1000)::BIGINT, is_read "
+                     "timestamp, is_read "
                      "FROM messages WHERE "
                      "(from_user_id = " + std::to_string(user_id_1) +
                      " AND to_user_id = " + std::to_string(user_id_2) + ") OR "
