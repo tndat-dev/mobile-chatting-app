@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myapplication.data.model.ChatConversation
 import com.example.myapplication.ui.activity.ChatActivity
 import com.example.myapplication.ui.adapter.ChatListAdapter
 import com.example.myapplication.ui.viewmodel.ChatViewModel
@@ -32,13 +33,18 @@ class ChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        adapter = ChatListAdapter { chat ->
-            // Navigate to ChatActivity to view full conversation
-            val intent = Intent(requireContext(), ChatActivity::class.java)
-            intent.putExtra("friendId", chat.userId)
-            intent.putExtra("friendName", chat.username)
-            startActivity(intent)
-        }
+        adapter = ChatListAdapter(
+            onChatClick = { chat ->
+                // Navigate to ChatActivity to view full conversation
+                val intent = Intent(requireContext(), ChatActivity::class.java)
+                intent.putExtra("friendId", chat.userId)
+                intent.putExtra("friendName", chat.username)
+                startActivity(intent)
+            },
+            onChatLongClick = { chat ->
+                showDeleteConversationDialog(chat)
+            }
+        )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
@@ -47,6 +53,18 @@ class ChatsFragment : Fragment() {
             adapter.submitList(chats)
             binding.tvEmpty.visibility = if (chats.isNullOrEmpty()) View.VISIBLE else View.GONE
         }
+    }
+    
+    private fun showDeleteConversationDialog(chat: ChatConversation) {
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Delete Conversation")
+            .setMessage("Delete conversation with ${chat.username}? This will remove all messages.")
+            .setPositiveButton("Delete") { _, _ ->
+                viewModel.deleteConversation(chat.userId)
+                android.widget.Toast.makeText(requireContext(), "Conversation deleted", android.widget.Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
     
     override fun onDestroyView() {

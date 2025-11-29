@@ -634,6 +634,25 @@ void handle_client(int client_fd, sockaddr_in addr) {
         break;
       }
       
+      case proto::DELETE_CONVERSATION: {
+        auto kv = parse_kv(payload);
+        int otherUserId = std::stoi(kv["otherUserId"]);
+        
+        bool success = false;
+        if (g_pg_persistence) {
+          success = g_pg_persistence->delete_conversation((int)current_user_id, otherUserId);
+        }
+        
+        if (success) {
+          log_activity("DELETE_CONVERSATION", current_user_id, 
+                      "with_userId=" + std::to_string(otherUserId));
+          send_message(client_fd, proto::SUCCESS, "Conversation deleted", current_user_id);
+        } else {
+          send_message(client_fd, proto::ERROR, "Failed to delete conversation", current_user_id);
+        }
+        break;
+      }
+      
       case proto::CREATE_GROUP: {
         auto kv = parse_kv(payload);
         std::string name = kv.count("name") ? kv["name"] 

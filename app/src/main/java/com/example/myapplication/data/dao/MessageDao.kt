@@ -38,4 +38,7 @@ interface MessageDao {
 
     @Query("SELECT * FROM messages WHERE senderId = :senderId AND recipientId = :recipientId AND content = :content ORDER BY timestamp DESC LIMIT 1")
     suspend fun findLatestMatchingMessage(senderId: Int, recipientId: Int, content: String): Message?
+    
+    @Query("DELETE FROM messages WHERE ((senderId = :currentUserId AND recipientId = :otherUserId) OR (senderId = :otherUserId AND recipientId = :currentUserId)) AND groupId IS NULL")
+    suspend fun deleteConversation(currentUserId: Int, otherUserId: Int)
 }

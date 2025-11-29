@@ -533,6 +533,26 @@ int PostgresPersistence::get_unread_count(int user_id) {
   return count;
 }
 
+bool PostgresPersistence::delete_conversation(int user_id_1, int user_id_2) {
+  std::string query = "DELETE FROM messages WHERE "
+                     "(from_user_id = " + std::to_string(user_id_1) +
+                     " AND to_user_id = " + std::to_string(user_id_2) + ") OR "
+                     "(from_user_id = " + std::to_string(user_id_2) +
+                     " AND to_user_id = " + std::to_string(user_id_1) + ")";
+  
+  PGresult* res = db->execute(query);
+  if (!res) {
+    std::cerr << "[PERSISTENCE] Failed to delete conversation between user " 
+              << user_id_1 << " and " << user_id_2 << std::endl;
+    return false;
+  }
+  
+  std::cout << "[PERSISTENCE] Successfully deleted conversation between user " 
+            << user_id_1 << " and " << user_id_2 << std::endl;
+  PQclear(res);
+  return true;
+}
+
 // ====================================================================
 // GROUP OPERATIONS
 // ====================================================================

@@ -12,7 +12,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ChatListAdapter(
-    private val onChatClick: (ChatConversation) -> Unit
+    private val onChatClick: (ChatConversation) -> Unit,
+    private val onChatLongClick: (ChatConversation) -> Unit
 ) : ListAdapter<ChatConversation, ChatListAdapter.ChatViewHolder>(ChatDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
@@ -21,7 +22,7 @@ class ChatListAdapter(
             parent,
             false
         )
-        return ChatViewHolder(binding, onChatClick)
+        return ChatViewHolder(binding, onChatClick, onChatLongClick)
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
@@ -30,7 +31,8 @@ class ChatListAdapter(
 
     class ChatViewHolder(
         private val binding: ItemChatBinding,
-        private val onChatClick: (ChatConversation) -> Unit
+        private val onChatClick: (ChatConversation) -> Unit,
+        private val onChatLongClick: (ChatConversation) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(chat: ChatConversation) {
@@ -39,16 +41,22 @@ class ChatListAdapter(
                 tvLastMessage.text = chat.lastMessage
                 tvTime.text = formatTime(chat.lastMessageTime)
                 
-                // Show unread count badge
-                if (chat.unreadCount > 0) {
-                    tvUnreadCount.isVisible = true
-                    tvUnreadCount.text = if (chat.unreadCount > 99) "99+" else chat.unreadCount.toString()
+                // Show read/unread status
+                if (chat.hasUnread) {
+                    tvReadStatus.isVisible = true
+                    tvReadStatus.text = "UNREAD"
+                    tvReadStatus.setBackgroundColor(0xFF2196F3.toInt()) // Blue color for unread
                 } else {
-                    tvUnreadCount.isVisible = false
+                    tvReadStatus.isVisible = false
                 }
                 
                 root.setOnClickListener {
                     onChatClick(chat)
+                }
+                
+                root.setOnLongClickListener {
+                    onChatLongClick(chat)
+                    true
                 }
             }
         }

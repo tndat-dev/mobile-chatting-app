@@ -84,6 +84,7 @@ public:
                                               int limit = 50);
   bool mark_messages_read(int to_user_id, int from_user_id);
   int get_unread_count(int user_id);
+  bool delete_conversation(int user_id_1, int user_id_2);
   
   // ====================================================================
   // GROUP OPERATIONS

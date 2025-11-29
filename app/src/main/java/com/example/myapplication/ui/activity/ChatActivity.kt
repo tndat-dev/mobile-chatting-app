@@ -50,6 +50,16 @@ class ChatActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = friendName
+        toolbar.inflateMenu(R.menu.chat_menu)
+        toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_delete_conversation -> {
+                    showDeleteConfirmationDialog()
+                    true
+                }
+                else -> false
+            }
+        }
         
         recyclerView = findViewById(R.id.rvMessages)
         etMessage = findViewById(R.id.etMessage)
@@ -65,6 +75,9 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
+        // Mark messages as read when entering chat
+        chatViewModel.markMessagesAsRead(friendId)
+        
         // Load conversation history from server only once
         if (!historyLoaded) {
             chatViewModel.loadConversationHistory(friendId)
@@ -168,6 +181,23 @@ class ChatActivity : AppCompatActivity() {
         if (count > 0) {
             Toast.makeText(this, "Loaded $count messages from history", Toast.LENGTH_SHORT).show()
         }
+    }
+    
+    private fun showDeleteConfirmationDialog() {
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Delete Conversation")
+            .setMessage("Are you sure you want to delete this entire conversation? This action cannot be undone and will delete messages from both devices.")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteConversation()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    
+    private fun deleteConversation() {
+        chatViewModel.deleteConversation(friendId)
+        Toast.makeText(this, "Conversation deleted", Toast.LENGTH_SHORT).show()
+        finish()
     }
     
     override fun onSupportNavigateUp(): Boolean {

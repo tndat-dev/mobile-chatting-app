@@ -118,4 +118,17 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+    
+    fun deleteConversation(otherUserId: Int) {
+        viewModelScope.launch {
+            try {
+                val success = repository.deleteConversation(otherUserId)
+                if (success) {
+                    logger.log(ActivityLogger.LogLevel.INFO, "CHAT", "Deleted conversation with user $otherUserId")
+                }
+            } catch (e: Exception) {
+                logger.logError("CHAT", "Error deleting conversation", e)
+            }
+        }
+    }
 }

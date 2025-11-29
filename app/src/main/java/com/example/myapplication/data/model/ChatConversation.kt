@@ -5,6 +5,6 @@ data class ChatConversation(
     val username: String,
     val lastMessage: String,
     val lastMessageTime: Long,
-    val unreadCount: Int,
+    val hasUnread: Boolean,
     val isOnline: Boolean
 )

@@ -50,6 +50,7 @@ class NetworkManager private constructor() {
         const val MESSAGE_RECEIVED = 0x21
         const val TYPING_STATUS = 0x22
         const val GET_CONVERSATION_HISTORY = 0x23
+        const val DELETE_CONVERSATION = 0x24
         const val CREATE_GROUP = 0x30
         const val INVITE_TO_GROUP = 0x31
         const val REMOVE_FROM_GROUP = 0x32
@@ -174,6 +175,11 @@ class NetworkManager private constructor() {
     fun getConversationHistory(otherUserId: Int, limit: Int = 50): Boolean {
         val payload = "otherUserId=$otherUserId&limit=$limit"
         return sendMessage(MessageType.GET_CONVERSATION_HISTORY, payload)
+    }
+    
+    fun deleteConversation(otherUserId: Int): Boolean {
+        val payload = "otherUserId=$otherUserId"
+        return sendMessage(MessageType.DELETE_CONVERSATION, payload)
     }
     
     fun getAllUsers(): Boolean {

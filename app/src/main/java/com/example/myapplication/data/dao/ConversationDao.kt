@@ -30,13 +30,16 @@ interface ConversationDao {
                      OR (m3.senderId = :currentUserId AND m3.recipientId = f.userId)
                   )
             ) AS lastMessageTime,
-            (
-                SELECT COUNT(*) FROM messages m4 
-                WHERE m4.groupId IS NULL 
-                  AND m4.senderId = f.userId 
-                  AND m4.recipientId = :currentUserId 
-                  AND m4.isRead = 0
-            ) AS unreadCount,
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 FROM messages m4 
+                    WHERE m4.groupId IS NULL 
+                      AND m4.senderId = f.userId 
+                      AND m4.recipientId = :currentUserId 
+                      AND m4.isRead = 0
+                ) THEN 1 
+                ELSE 0 
+            END AS hasUnread,
             f.isOnline AS isOnline
         FROM friends f
         WHERE EXISTS (

@@ -147,6 +147,23 @@ class ChatRepository(
         messageDao.markMessagesAsRead(networkManager.getUserId(), otherUserId)
     }
     
+    suspend fun deleteConversation(otherUserId: Int): Boolean = withContext(Dispatchers.IO) {
+        try {
+            Log.d(TAG, "deleteConversation: Deleting conversation with user $otherUserId")
+            // Delete from local database
+            messageDao.deleteConversation(networkManager.getUserId(), otherUserId)
+            // Delete from server
+            val success = networkManager.deleteConversation(otherUserId)
+            if (success) {
+                Log.d(TAG, "deleteConversation: Successfully deleted conversation")
+            }
+            success
+        } catch (e: Exception) {
+            Log.e(TAG, "Error deleting conversation", e)
+            false
+        }
+    }
+    
     // Friend operations
     fun getAllFriends(): LiveData<List<Friend>> = friendDao.getAllFriends()
     

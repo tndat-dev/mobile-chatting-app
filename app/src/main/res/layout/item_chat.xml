@@ -43,23 +43,25 @@
         android:textColor="@android:color/darker_gray"
         app:layout_constraintTop_toBottomOf="@+id/tvUsername"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tvUnreadCount"
+        app:layout_constraintEnd_toStartOf="@+id/tvReadStatus"
         tools:text="Hey, how are you?" />
 
     <TextView
-        android:id="@+id/tvUnreadCount"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:id="@+id/tvReadStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
         android:background="@android:color/holo_blue_light"
-        android:gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="12sp"
+        android:textSize="11sp"
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/tvUsername"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="3"
+        app:layout_constraintBottom_toBottomOf="@+id/tvLastMessage"
+        tools:text="UNREAD"
         tools:visibility="visible" />
 
     <View
