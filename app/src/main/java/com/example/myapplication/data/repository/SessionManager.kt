@@ -81,7 +81,7 @@ class SessionManager private constructor(context: Context) {
     }
     
     fun getServerHost(): String {
-        return sharedPreferences.getString(KEY_SERVER_HOST, "10.0.2.2") ?: "10.0.2.2"
+        return sharedPreferences.getString(KEY_SERVER_HOST, "127.0.0.1") ?: "127.0.0.1"
     }
     
     fun getServerPort(): Int {
