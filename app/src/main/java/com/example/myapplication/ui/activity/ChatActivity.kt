@@ -27,6 +27,7 @@ class ChatActivity : AppCompatActivity() {
     private var friendId: Int = 0
     private var friendName: String = ""
     private var myUserId: Int = 0
+    private var historyLoaded: Boolean = false
     private val chatViewModel: ChatViewModel by viewModels()
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,8 +65,10 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        // Load conversation history from server
-        chatViewModel.loadConversationHistory(friendId)
+        // Load conversation history from server only once
+        if (!historyLoaded) {
+            chatViewModel.loadConversationHistory(friendId)
+        }
         
         // Quan sát tin nhắn từ Room để hiển thị lịch sử bền vững
         chatViewModel.getMessages(myUserId, friendId).observe(this) { list ->
@@ -94,9 +97,13 @@ class ChatActivity : AppCompatActivity() {
                     when (messageType) {
                         NetworkManager.MessageType.DIRECT_MESSAGE -> handleIncomingMessage(payload)
                         NetworkManager.MessageType.SUCCESS -> {
-                            // Check if this is conversation history response
-                            if (payload.contains("count=")) {
+                            android.util.Log.d("ChatActivity", "SUCCESS received: historyLoaded=$historyLoaded, payload=$payload")
+                            // Conversation history is handled separately, not from generic SUCCESS
+                            // Only handle conversation history if it contains the specific pattern AND we haven't loaded it yet
+                            if (!historyLoaded && payload.startsWith("count=") && payload.contains("&from0=") && payload.contains("&to0=")) {
+                                android.util.Log.d("ChatActivity", "Processing conversation history")
                                 handleConversationHistory(payload)
+                                historyLoaded = true
                             }
                         }
                         NetworkManager.MessageType.ERROR -> {
@@ -154,9 +161,8 @@ class ChatActivity : AppCompatActivity() {
             val content = pairs["content$i"] ?: continue
             val timestamp = pairs["timestamp$i"]?.toLongOrNull() ?: continue
             
-            // Save historical messages to Room database
-            // Server sends from->to, we need to save as senderId->recipientId correctly
-            chatViewModel.receiveMessage(fromUserId, content, timestamp, recipientId = toUserId)
+            // Deduplicated history insertion
+            chatViewModel.receiveHistoryMessage(fromUserId, toUserId, content, timestamp)
         }
         
         if (count > 0) {

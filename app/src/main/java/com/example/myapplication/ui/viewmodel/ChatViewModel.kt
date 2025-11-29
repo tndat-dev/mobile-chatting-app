@@ -101,6 +101,12 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             repository.receiveMessage(senderId, content, timestamp, groupId, recipientId)
         }
     }
+
+    fun receiveHistoryMessage(senderId: Int, recipientId: Int, content: String, timestamp: Long) {
+        viewModelScope.launch {
+            repository.receiveHistoryMessage(senderId, recipientId, content, timestamp)
+        }
+    }
     
     fun loadConversationHistory(otherUserId: Int) {
         viewModelScope.launch {

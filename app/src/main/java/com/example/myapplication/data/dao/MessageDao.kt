@@ -35,4 +35,7 @@ interface MessageDao {
     
     @Query("DELETE FROM messages WHERE timestamp < :timestamp")
     suspend fun deleteOldMessages(timestamp: Long)
+
+    @Query("SELECT * FROM messages WHERE senderId = :senderId AND recipientId = :recipientId AND content = :content ORDER BY timestamp DESC LIMIT 1")
+    suspend fun findLatestMatchingMessage(senderId: Int, recipientId: Int, content: String): Message?
 }

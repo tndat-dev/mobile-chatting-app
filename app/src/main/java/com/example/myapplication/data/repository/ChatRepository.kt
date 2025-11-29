@@ -38,6 +38,7 @@ class ChatRepository(
     
     suspend fun sendMessage(recipientId: Int, content: String): Boolean = withContext(Dispatchers.IO) {
         try {
+            Log.d(TAG, "sendMessage: Inserting message to Room - recipient=$recipientId, content=$content")
             val message = Message(
                 senderId = networkManager.getUserId(),
                 recipientId = recipientId,
@@ -47,6 +48,7 @@ class ChatRepository(
             )
             
             val messageId = messageDao.insertMessage(message)
+            Log.d(TAG, "sendMessage: Message inserted with id=$messageId")
             val sent = networkManager.sendChatMessage(recipientId, content)
             
             if (sent) {
@@ -88,6 +90,7 @@ class ChatRepository(
     suspend fun receiveMessage(senderId: Int, content: String, timestamp: Long, groupId: Int? = null, recipientId: Int? = null) {
         withContext(Dispatchers.IO) {
             try {
+                Log.d(TAG, "receiveMessage: sender=$senderId, recipient=${recipientId ?: networkManager.getUserId()}, content=$content, timestamp=$timestamp")
                 val message = Message(
                     senderId = senderId,
                     recipientId = recipientId ?: networkManager.getUserId(),
@@ -98,9 +101,44 @@ class ChatRepository(
                     isDelivered = true
                 )
                 
-                messageDao.insertMessage(message)
+                val insertedId = messageDao.insertMessage(message)
+                Log.d(TAG, "receiveMessage: Message inserted/ignored with id=$insertedId")
             } catch (e: Exception) {
                 Log.e(TAG, "Error receiving message", e)
+            }
+        }
+    }
+
+    suspend fun receiveHistoryMessage(senderId: Int, recipientId: Int, content: String, timestamp: Long) {
+        withContext(Dispatchers.IO) {
+            try {
+                val existing = messageDao.findLatestMatchingMessage(senderId, recipientId, content)
+                if (existing != null) {
+                    // If timestamps differ but within 15s, treat as same message; update flags & keep earliest timestamp
+                    val diff = kotlin.math.abs(existing.timestamp - timestamp)
+                    if (diff < 15000) {
+                        if (!existing.isSent || !existing.isDelivered) {
+                            val updated = existing.copy(isSent = true, isDelivered = true)
+                            messageDao.updateMessage(updated)
+                            Log.d(TAG, "receiveHistoryMessage: Updated existing message id=${existing.id} (dedup)")
+                        } else {
+                            Log.d(TAG, "receiveHistoryMessage: Duplicate within threshold ignored id=${existing.id}")
+                        }
+                        return@withContext
+                    }
+                }
+                val message = Message(
+                    senderId = senderId,
+                    recipientId = recipientId,
+                    content = content,
+                    timestamp = timestamp,
+                    isSent = true,
+                    isDelivered = true
+                )
+                val id = messageDao.insertMessage(message)
+                Log.d(TAG, "receiveHistoryMessage: Inserted new history message id=$id")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error receiving history message", e)
             }
         }
     }
