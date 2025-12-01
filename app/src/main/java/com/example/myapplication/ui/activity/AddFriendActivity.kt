@@ -149,6 +149,12 @@ class AddFriendActivity : AppCompatActivity() {
             }
         }
         
+        // If opened as Add Members for a group, only show friends (cannot add non-friends)
+        if (targetGroupId > 0) {
+            val friendsOnly = usersList.filter { it.isFriend }
+            usersList.clear()
+            usersList.addAll(friendsOnly)
+        }
         adapter.notifyDataSetChanged()
         
         if (usersList.isEmpty()) {
@@ -186,6 +192,15 @@ class AddFriendActivity : AppCompatActivity() {
                 val invited = networkManager.inviteToGroup(targetGroupId, user.userId)
                 if (invited) {
                     Toast.makeText(this, "Invited ${user.username} to group", Toast.LENGTH_SHORT).show()
+                    // Remove invited user from the list so the Add Members screen updates.
+                    // We do NOT add them to local `group_members` here because the server
+                    // treats this as an invite that must be accepted by the target user.
+                    runOnUiThread {
+                        usersList.removeAll { it.userId == user.userId }
+                        adapter.notifyDataSetChanged()
+                        // inform caller that something changed (so it can refresh if needed)
+                        setResult(RESULT_OK)
+                    }
                 } else {
                     Toast.makeText(this, "Failed to invite ${user.username}", Toast.LENGTH_SHORT).show()
                 }

@@ -13,6 +13,7 @@ import com.example.myapplication.utils.ActivityLogger
 import com.example.myapplication.service.ServerService
 import com.example.myapplication.ui.viewmodel.FriendViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
 
 class LoginActivity : AppCompatActivity(), NetworkManager.MessageCallback {
     
@@ -208,6 +209,29 @@ class LoginActivity : AppCompatActivity(), NetworkManager.MessageCallback {
                 
                 sessionManager.saveSession(userId, username, token)
                 networkManager.setUserId(userId)
+
+                // Persist the current user into local users table immediately so other screens
+                // (groups, nicknames) can resolve the creator's username without waiting
+                // for a full GET_ALL_USERS response.
+                try {
+                    val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this@LoginActivity)
+                    val user = com.example.myapplication.data.model.User(
+                        id = userId,
+                        username = username,
+                        email = "",
+                        isOnline = true,
+                        lastSeen = System.currentTimeMillis()
+                    )
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            db.userDao().insertUser(user)
+                        } catch (e: Exception) {
+                            // ignore insert failures
+                        }
+                    }
+                } catch (e: Exception) {
+                    // ignore persistence errors
+                }
 
                 // Ngay sau khi login thành công, gọi lấy danh sách bạn bè/pending
                 // để bắt kịp các FRIEND_REQUEST đến sớm trong quá trình login

@@ -771,24 +771,9 @@ void handle_client(int client_fd, sockaddr_in addr) {
           // For invited memberIds: if they are friends, add them immediately (persisted members).
           // Otherwise, create invites for them to accept.
           for (int memberId : memberIds) {
-            bool addedAsMember = false;
-            {
-              std::lock_guard<std::mutex> lock(g_mutex);
-              auto itf = g_friends.find((int)current_user_id);
-              if (itf != g_friends.end() && itf->second.count(memberId) && itf->second[memberId]) {
-                addedAsMember = true;
-              }
-            }
-
-            if (addedAsMember) {
-              if (!g_pg_persistence->add_group_member(gid, memberId)) {
-                std::cerr << "[PERSISTENCE] Failed to add group member for gid=" << gid << " uid=" << memberId << std::endl;
-              }
-            } else {
-              if (!g_pg_persistence->create_group_invite(gid, (int)current_user_id, memberId)) {
-                std::cerr << "[PERSISTENCE] Failed to create group invite for gid=" << gid << " uid=" << memberId << std::endl;
-                // don't treat as fatal; continue
-              }
+            // Always add members directly (server-authoritative auto-join on create)
+            if (!g_pg_persistence->add_group_member(gid, memberId)) {
+              std::cerr << "[PERSISTENCE] Failed to add group member for gid=" << gid << " uid=" << memberId << std::endl;
             }
           }
         } else {
@@ -868,10 +853,19 @@ void handle_client(int client_fd, sockaddr_in addr) {
         }
 
         if (ok) {
-          // Persist invite if DB persistence is available
+          // New behavior: make invites immediate and server-authoritative.
+          // Persist member directly so invited user becomes a group member without needing to accept.
           if (g_pg_persistence) {
-            if (!g_pg_persistence->create_group_invite(gid, (int)current_user_id, uid)) {
-              std::cerr << "[PERSISTENCE] Failed to create group invite for gid=" << gid << " uid=" << uid << std::endl;
+            if (!g_pg_persistence->add_group_member(gid, uid)) {
+              std::cerr << "[PERSISTENCE] Failed to add group member for gid=" << gid << " uid=" << uid << std::endl;
+              send_message(client_fd, proto::ERROR, "Invite failed (db)", current_user_id);
+              break;
+            }
+            // Update in-memory map after persistence
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              auto it = g_groups.find(gid);
+              if (it != g_groups.end()) it->second.members[uid] = true;
             }
           } else {
             // Fallback: add directly in-memory
@@ -886,6 +880,7 @@ void handle_client(int client_fd, sockaddr_in addr) {
             if (it != g_online_clients.end()) fd = it->second;
           }
           if (fd != -1) {
+            // Notify invited user that they were added to the group (no acceptance required)
             auto notif = serialize_kv({
               {"groupId", std::to_string(gid)},
               {"name", g_groups[gid].name},
@@ -893,7 +888,7 @@ void handle_client(int client_fd, sockaddr_in addr) {
             });
             send_message(fd, proto::INVITE_TO_GROUP, notif, current_user_id);
           }
-          send_message(client_fd, proto::SUCCESS, "Invited", current_user_id);
+          send_message(client_fd, proto::SUCCESS, "Added", current_user_id);
         } else {
           send_message(client_fd, proto::ERROR, "Invite failed", current_user_id);
         }

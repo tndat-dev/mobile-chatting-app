@@ -272,51 +272,48 @@ class MainActivity : AppCompatActivity(), NetworkManager.MessageCallback {
                 val fromUid = pairs["fromUserId"]?.toIntOrNull() ?: -1
 
                 runOnUiThread {
-                    MaterialAlertDialogBuilder(this)
-                        .setTitle("Group Invite")
-                        .setMessage("You were invited to group '$gname'. Accept?")
-                        .setPositiveButton("Accept") { _, _ ->
-                            // Tell server we accept and persist locally
-                            lifecycleScope.launch {
+                        // Auto-join: server already added the user to the group, persist locally and fetch history
+                        lifecycleScope.launch {
+                            try {
+                                val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this@MainActivity)
+                                val group = com.example.myapplication.data.model.Group(
+                                    id = gid,
+                                    name = gname,
+                                    creatorId = fromUid,
+                                    memberCount = 1
+                                )
                                 try {
-                                    val accepted = networkManager.acceptGroupInvite(gid)
-                                    if (accepted) {
-                                        // Insert group and member locally
-                                        val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this@MainActivity)
-                                        val group = com.example.myapplication.data.model.Group(
-                                            id = gid,
-                                            name = gname,
-                                            creatorId = fromUid,
-                                            memberCount = 1
-                                        )
-                                        db.groupDao().insertGroup(group)
-                                        val member = com.example.myapplication.data.model.GroupMember(
-                                            groupId = gid,
-                                            userId = sessionManager.getUserId(),
-                                            username = sessionManager.getUsername() ?: "Me",
-                                            nickname = null,
-                                            isAdmin = false,
-                                            joinedAt = System.currentTimeMillis()
-                                        )
-                                        db.groupMemberDao().insertMember(member)
-                                        runOnUiThread { Toast.makeText(this@MainActivity, "Joined group $gname", Toast.LENGTH_SHORT).show() }
-                                    } else {
-                                        runOnUiThread { Toast.makeText(this@MainActivity, "Failed to accept invite", Toast.LENGTH_SHORT).show() }
-                                    }
+                                    db.groupDao().insertGroup(group)
                                 } catch (e: Exception) {
-                                    runOnUiThread { Toast.makeText(this@MainActivity, "Error accepting invite", Toast.LENGTH_SHORT).show() }
+                                    // ignore if exists
                                 }
-                            }
-                        }
-                        .setNegativeButton("Decline") { _, _ ->
-                            lifecycleScope.launch {
+                                val member = com.example.myapplication.data.model.GroupMember(
+                                    groupId = gid,
+                                    userId = sessionManager.getUserId(),
+                                    username = sessionManager.getUsername() ?: "Me",
+                                    nickname = null,
+                                    isAdmin = false,
+                                    joinedAt = System.currentTimeMillis()
+                                )
                                 try {
-                                    networkManager.declineGroupInvite(gid)
-                                } catch (e: Exception) {}
+                                    db.groupMemberDao().insertMember(member)
+                                } catch (e: Exception) {
+                                    // ignore if exists
+                                }
+
+                                // Request group history to populate messages
+                                try {
+                                    if (networkManager.isConnected()) networkManager.getGroupHistory(gid, 100)
+                                } catch (e: Exception) {
+                                    // ignore
+                                }
+
+                                runOnUiThread { Toast.makeText(this@MainActivity, "You were added to group '$gname'", Toast.LENGTH_SHORT).show() }
+                            } catch (e: Exception) {
+                                runOnUiThread { Toast.makeText(this@MainActivity, "Error processing group add", Toast.LENGTH_SHORT).show() }
                             }
                         }
-                        .show()
-                }
+                    }
             }
         }
     }

@@ -717,15 +717,36 @@ std::vector<data::User> PostgresPersistence::get_group_members(int group_id) {
 // ====================================================================
 
 bool PostgresPersistence::create_group_invite(int group_id, int from_user_id, int to_user_id) {
-  std::string query = "INSERT INTO group_invites (group_id, from_user_id, to_user_id, status) VALUES (" 
-                     + std::to_string(group_id) + ", " + std::to_string(from_user_id) + ", " + std::to_string(to_user_id) 
-                     + ", 'PENDING') ON CONFLICT (group_id, to_user_id) DO UPDATE SET status = 'PENDING', created_at = CURRENT_TIMESTAMP";
+  // Some installations may not have a unique constraint on (group_id, to_user_id).
+  // Do a safe SELECT-then-INSERT/UPDATE sequence instead of relying on ON CONFLICT.
+  try {
+    std::string sel = "SELECT id FROM group_invites WHERE group_id = " + std::to_string(group_id)
+                      + " AND to_user_id = " + std::to_string(to_user_id);
+    PGresult* rsel = db->execute(sel);
+    if (!rsel) return false;
+    bool exists = PQntuples(rsel) > 0;
+    PQclear(rsel);
 
-  PGresult* res = db->execute(query);
-  if (!res) return false;
-  PQclear(res);
-  log_activity("GROUP_INVITE_CREATE", from_user_id, to_user_id, "groupId=" + std::to_string(group_id));
-  return true;
+    if (exists) {
+      std::string upd = "UPDATE group_invites SET status = 'PENDING', created_at = NOW() "
+                        "WHERE group_id = " + std::to_string(group_id) + " AND to_user_id = " + std::to_string(to_user_id);
+      PGresult* rupd = db->execute(upd);
+      if (!rupd) return false;
+      PQclear(rupd);
+    } else {
+      std::string ins = "INSERT INTO group_invites (group_id, from_user_id, to_user_id, status) VALUES (" 
+                        + std::to_string(group_id) + ", " + std::to_string(from_user_id) + ", " + std::to_string(to_user_id) 
+                        + ", 'PENDING')";
+      PGresult* rins = db->execute(ins);
+      if (!rins) return false;
+      PQclear(rins);
+    }
+
+    log_activity("GROUP_INVITE_CREATE", from_user_id, to_user_id, "groupId=" + std::to_string(group_id));
+    return true;
+  } catch (...) {
+    return false;
+  }
 }
 
 std::vector<data::GroupInvite> PostgresPersistence::get_pending_group_invites(int user_id) {

@@ -386,7 +386,6 @@ class GroupChatActivity : AppCompatActivity() {
         val live = db.groupMemberDao().getGroupMembers(groupId)
         lateinit var observer: androidx.lifecycle.Observer<List<GroupMember>>
         observer = androidx.lifecycle.Observer { members ->
-            live.removeObserver(observer)
             val baseList = (members ?: emptyList()).toMutableList()
             // Add an 'Add member' synthetic item at the end so users can add members from here
             val addEntry = com.example.myapplication.data.model.GroupMember(groupId = groupId, userId = -1, username = "Add members")
@@ -477,7 +476,6 @@ class GroupChatActivity : AppCompatActivity() {
         val live = db.groupMemberDao().getGroupMembers(groupId)
         lateinit var observer: androidx.lifecycle.Observer<List<GroupMember>>
         observer = androidx.lifecycle.Observer { members ->
-            live.removeObserver(observer)
             val list = (members ?: emptyList()).toMutableList()
             val adapter = com.example.myapplication.ui.adapter.MemberNicknameAdapter(list) { gm ->
                 // Edit callback: allow editing nickname for any member
