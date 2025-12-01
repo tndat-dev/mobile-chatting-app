@@ -38,8 +38,13 @@ class ChatListAdapter(
         fun bind(chat: ChatConversation) {
             binding.apply {
                 tvUsername.text = chat.username
-                tvLastMessage.text = chat.lastMessage
-                tvTime.text = formatTime(chat.lastMessageTime)
+                tvLastMessage.text = chat.lastMessage ?: ""
+                if (chat.lastMessageTime != null && chat.lastMessageTime > 0L) {
+                    tvTime.visibility = android.view.View.VISIBLE
+                    tvTime.text = formatTime(chat.lastMessageTime!!)
+                } else {
+                    tvTime.visibility = android.view.View.GONE
+                }
                 
                 // Show read/unread status
                 if (chat.hasUnread) {

@@ -68,6 +68,26 @@ int main() {
     server_state::g_pg_persistence = pg_persistence;
     
     std::cout << "[C++ SERVER] Loaded " << all_users.size() << " users from database" << std::endl;
+    // Load groups and members into in-memory cache so group operations work immediately
+    for (const auto& user : all_users) {
+      auto groups = pg_persistence->get_user_groups(user.id);
+      for (const auto& g : groups) {
+        std::lock_guard<std::mutex> lock(server_state::g_mutex);
+        if (!server_state::g_groups.count(g.id)) {
+          data::Group dg;
+          dg.id = g.id;
+          dg.name = g.name;
+          dg.ownerId = g.ownerId;
+          // populate members
+          auto members = pg_persistence->get_group_members(g.id);
+          for (const auto& m : members) {
+            dg.members[m.id] = true;
+          }
+          server_state::g_groups[g.id] = std::move(dg);
+          if (g.id >= server_state::g_next_group_id) server_state::g_next_group_id = g.id + 1;
+        }
+      }
+    }
   }
   
   // Create server socket

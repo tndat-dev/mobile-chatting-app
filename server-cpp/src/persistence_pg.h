@@ -92,9 +92,17 @@ public:
   bool create_group(const std::string& name, int creator_id, int& out_group_id);
   bool add_group_member(int group_id, int user_id);
   bool remove_group_member(int group_id, int user_id);
+  bool set_group_nickname(int group_id, int user_id, const std::string& nickname);
+  std::unordered_map<int, std::string> get_group_member_nicknames(int group_id);
   std::vector<data::Group> get_user_groups(int user_id);
   std::vector<data::User> get_group_members(int group_id);
   bool is_group_member(int group_id, int user_id);
+  // Group invite operations
+  bool create_group_invite(int group_id, int from_user_id, int to_user_id);
+  std::vector<data::GroupInvite> get_pending_group_invites(int user_id);
+  bool delete_group_invite(int group_id, int to_user_id);
+  // Additional group operations
+  bool rename_group(int group_id, const std::string& new_name);
   
   // ====================================================================
   // GROUP MESSAGE OPERATIONS

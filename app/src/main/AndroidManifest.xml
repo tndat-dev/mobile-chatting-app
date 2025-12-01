@@ -50,6 +50,11 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication.NoActionBar" />
         
+        <activity
+            android:name=".ui.activity.CreateGroupActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication.NoActionBar" />
+        
         <service
             android:name=".service.ServerService"
             android:enabled="true"

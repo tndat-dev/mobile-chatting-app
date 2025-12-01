@@ -8,6 +8,9 @@ import com.example.myapplication.data.model.Group
 interface GroupDao {
     @Query("SELECT * FROM groups ORDER BY name ASC")
     fun getAllGroups(): LiveData<List<Group>>
+
+    @Query("SELECT g.* FROM groups g JOIN group_members gm ON g.id = gm.groupId WHERE gm.userId = :userId ORDER BY g.name ASC")
+    fun getAllGroupsForUser(userId: Int): LiveData<List<Group>>
     
     @Query("SELECT * FROM groups WHERE id = :groupId")
     suspend fun getGroup(groupId: Int): Group?

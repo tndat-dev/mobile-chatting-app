@@ -54,7 +54,11 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         return repository.getGroupMessages(groupId)
     }
 
-    fun getChatConversations() = repository.getChatConversations()
+    fun getChatConversations() : LiveData<List<com.example.myapplication.data.model.ChatConversation>> {
+        val sessionManager = com.example.myapplication.data.repository.SessionManager.getInstance(getApplication())
+        val uid = sessionManager.getUserId().takeIf { it >= 0 } ?: networkManager.getUserId()
+        return repository.getChatConversations(uid)
+    }
     
     fun sendMessage(recipientId: Int, content: String) {
         viewModelScope.launch {
@@ -115,6 +119,20 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                 logger.log(ActivityLogger.LogLevel.INFO, "CHAT", "Requested conversation history with user $otherUserId")
             } catch (e: Exception) {
                 logger.logError("CHAT", "Error loading conversation history", e)
+            }
+        }
+    }
+
+    fun loadGroupHistory(groupId: Int) {
+        viewModelScope.launch {
+            try {
+                val ok = networkManager.getGroupHistory(groupId, 100)
+                logger.log(ActivityLogger.LogLevel.INFO, "GROUP", "Requested group history for group $groupId, sent=$ok")
+                if (!ok) {
+                    logger.logError("GROUP", "Failed to send GET_GROUP_HISTORY for group $groupId", Exception("send failed"))
+                }
+            } catch (e: Exception) {
+                logger.logError("GROUP", "Error loading group history", e)
             }
         }
     }

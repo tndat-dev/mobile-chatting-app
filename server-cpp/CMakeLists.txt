@@ -34,3 +34,9 @@ if(UNIX)
     ${PostgreSQL_LIBRARIES}
   )
 endif()
+
+# Minimal test client for protocol testing (no Postgres dependency)
+add_executable(test_client tools/test_client.cpp src/network_utils.cpp)
+if(UNIX)
+  target_link_libraries(test_client PRIVATE Threads::Threads)
+endif()

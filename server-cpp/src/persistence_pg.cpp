@@ -607,8 +607,38 @@ bool PostgresPersistence::add_group_member(int group_id, int user_id) {
   }
   
   PQclear(res);
-  log_activity("GROUP_MEMBER_ADD", user_id, group_id, "");
+  // Do not use group_id as target_user_id (FK references users table).
+  // Log the activity without a target user; include group id in details if needed.
+  log_activity("GROUP_MEMBER_ADD", user_id, 0, "groupId=" + std::to_string(group_id));
   return true;
+}
+
+bool PostgresPersistence::set_group_nickname(int group_id, int user_id, const std::string& nickname) {
+  std::string query = "UPDATE group_members SET nickname = '" + escape_string(nickname) + "' "
+                     "WHERE group_id = " + std::to_string(group_id) + " AND user_id = " + std::to_string(user_id);
+  PGresult* res = db->execute(query);
+  if (!res) return false;
+  PQclear(res);
+  log_activity("GROUP_NICKNAME_SET", user_id, 0, "groupId=" + std::to_string(group_id) + " nick=" + nickname);
+  return true;
+}
+
+std::unordered_map<int, std::string> PostgresPersistence::get_group_member_nicknames(int group_id) {
+  std::unordered_map<int, std::string> result;
+  std::string query = "SELECT user_id, nickname FROM group_members WHERE group_id = " + std::to_string(group_id);
+  PGresult* res = db->execute(query);
+  if (!res) return result;
+  int rows = PQntuples(res);
+  for (int i = 0; i < rows; ++i) {
+    int uid = std::stoi(PQgetvalue(res, i, 0));
+    if (PQgetisnull(res, i, 1)) {
+      result[uid] = std::string();
+    } else {
+      result[uid] = PQgetvalue(res, i, 1);
+    }
+  }
+  PQclear(res);
+  return result;
 }
 
 bool PostgresPersistence::remove_group_member(int group_id, int user_id) {
@@ -622,7 +652,7 @@ bool PostgresPersistence::remove_group_member(int group_id, int user_id) {
   }
   
   PQclear(res);
-  log_activity("GROUP_MEMBER_REMOVE", user_id, group_id, "");
+  log_activity("GROUP_MEMBER_REMOVE", user_id, 0, "groupId=" + std::to_string(group_id));
   return true;
 }
 
@@ -682,6 +712,50 @@ std::vector<data::User> PostgresPersistence::get_group_members(int group_id) {
   return members;
 }
 
+// ====================================================================
+// GROUP INVITE OPERATIONS
+// ====================================================================
+
+bool PostgresPersistence::create_group_invite(int group_id, int from_user_id, int to_user_id) {
+  std::string query = "INSERT INTO group_invites (group_id, from_user_id, to_user_id, status) VALUES (" 
+                     + std::to_string(group_id) + ", " + std::to_string(from_user_id) + ", " + std::to_string(to_user_id) 
+                     + ", 'PENDING') ON CONFLICT (group_id, to_user_id) DO UPDATE SET status = 'PENDING', created_at = CURRENT_TIMESTAMP";
+
+  PGresult* res = db->execute(query);
+  if (!res) return false;
+  PQclear(res);
+  log_activity("GROUP_INVITE_CREATE", from_user_id, to_user_id, "groupId=" + std::to_string(group_id));
+  return true;
+}
+
+std::vector<data::GroupInvite> PostgresPersistence::get_pending_group_invites(int user_id) {
+  std::vector<data::GroupInvite> invites;
+  std::string query = "SELECT id, group_id, from_user_id, to_user_id, status, (EXTRACT(EPOCH FROM created_at) * 1000)::BIGINT FROM group_invites WHERE to_user_id = " + std::to_string(user_id) + " AND status = 'PENDING' ORDER BY created_at DESC";
+  PGresult* res = db->execute(query);
+  if (!res) return invites;
+  int rows = PQntuples(res);
+  for (int i = 0; i < rows; ++i) {
+    data::GroupInvite gi;
+    gi.id = std::stoi(PQgetvalue(res, i, 0));
+    gi.group_id = std::stoi(PQgetvalue(res, i, 1));
+    gi.from_user_id = std::stoi(PQgetvalue(res, i, 2));
+    gi.to_user_id = std::stoi(PQgetvalue(res, i, 3));
+    gi.status = PQgetvalue(res, i, 4);
+    gi.timestamp = std::stoll(PQgetvalue(res, i, 5));
+    invites.push_back(gi);
+  }
+  PQclear(res);
+  return invites;
+}
+
+bool PostgresPersistence::delete_group_invite(int group_id, int to_user_id) {
+  std::string query = "DELETE FROM group_invites WHERE group_id = " + std::to_string(group_id) + " AND to_user_id = " + std::to_string(to_user_id);
+  PGresult* res = db->execute(query);
+  if (!res) return false;
+  PQclear(res);
+  return true;
+}
+
 bool PostgresPersistence::is_group_member(int group_id, int user_id) {
   std::string query = "SELECT 1 FROM group_members WHERE group_id = "
                      + std::to_string(group_id) + " AND user_id = "
@@ -697,6 +771,15 @@ bool PostgresPersistence::is_group_member(int group_id, int user_id) {
   return result;
 }
 
+bool PostgresPersistence::rename_group(int group_id, const std::string& new_name) {
+  std::string query = "UPDATE groups SET name = '" + escape_string(new_name) + "' WHERE id = " + std::to_string(group_id);
+  PGresult* res = db->execute(query);
+  if (!res) return false;
+  PQclear(res);
+  log_activity("GROUP_RENAME", 0, 0, "groupId=" + std::to_string(group_id) + " name=" + new_name);
+  return true;
+}
+
 // ====================================================================
 // GROUP MESSAGE OPERATIONS
 // ====================================================================
@@ -704,11 +787,10 @@ bool PostgresPersistence::is_group_member(int group_id, int user_id) {
 bool PostgresPersistence::save_group_message(int group_id, int user_id,
                                             const std::string& content,
                                             long long timestamp) {
-  std::string query = "INSERT INTO group_messages (group_id, user_id, content, "
-                     "timestamp) VALUES (" + std::to_string(group_id) + ", "
-                     + std::to_string(user_id) + ", '"
-                     + escape_string(content) + "', to_timestamp("
-                     + std::to_string(timestamp / 1000.0) + "))";
+  // `group_messages.timestamp` is a BIGINT storing epoch milliseconds
+  std::string query = "INSERT INTO group_messages (group_id, user_id, content, timestamp) VALUES (" 
+                     + std::to_string(group_id) + ", " + std::to_string(user_id) + ", '"
+                     + escape_string(content) + "', " + std::to_string(timestamp) + ")";
   
   PGresult* res = db->execute(query);
   if (!res) {
@@ -723,8 +805,8 @@ std::vector<data::GroupMessage> PostgresPersistence::get_group_messages(int grou
                                                                         int limit) {
   std::vector<data::GroupMessage> messages;
   
-  std::string query = "SELECT id, group_id, user_id, content, "
-                     "(EXTRACT(EPOCH FROM timestamp) * 1000)::BIGINT "
+  // `group_messages.timestamp` is stored as BIGINT (epoch milliseconds)
+  std::string query = "SELECT id, group_id, user_id, content, timestamp "
                      "FROM group_messages WHERE group_id = "
                      + std::to_string(group_id)
                      + " ORDER BY timestamp DESC LIMIT " + std::to_string(limit);

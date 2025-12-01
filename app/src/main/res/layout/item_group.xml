@@ -20,30 +20,20 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="?android:textColorPrimary"
-            app:layout_constraintEnd_toStartOf="@id/btnLeave"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvMemberCount"
+            app:layout_constraintHorizontal_bias="0" />
 
         <TextView
             android:id="@+id/tvMemberCount"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
             android:text="0 members"
             android:textSize="14sp"
             android:textColor="?android:textColorSecondary"
-            app:layout_constraintEnd_toStartOf="@id/btnLeave"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvGroupName" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLeave"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Leave"
-            android:textColor="?attr/colorError"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

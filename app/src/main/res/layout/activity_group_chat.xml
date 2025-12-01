@@ -13,7 +13,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_back"
         app:title="Group Chat"
-        app:titleTextColor="@android:color/white" />
+        app:titleTextColor="@android:color/white">
+        <TextView
+            android:id="@+id/btnInfo"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="12dp"
+            android:gravity="center"
+            android:text="i"
+            android:textColor="#1E88E5"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:background="@drawable/bg_info_circle"
+            android:visibility="visible" />
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

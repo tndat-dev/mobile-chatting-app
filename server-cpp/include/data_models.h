@@ -22,6 +22,8 @@ struct Group {
   std::string name;
   int ownerId;
   std::unordered_map<int, bool> members;
+  // Optional per-member nickname map (runtime only)
+  std::unordered_map<int, std::string> member_nicknames;
 };
 
 struct Message {
@@ -35,6 +37,15 @@ struct Message {
 
 struct FriendRequest {
   int id;
+  int from_user_id;
+  int to_user_id;
+  std::string status; // PENDING, ACCEPTED, DECLINED
+  long long timestamp;
+};
+
+struct GroupInvite {
+  int id;
+  int group_id;
   int from_user_id;
   int to_user_id;
   std::string status; // PENDING, ACCEPTED, DECLINED

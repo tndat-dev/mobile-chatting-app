@@ -32,8 +32,8 @@ class ChatRepository(
         return messageDao.getGroupMessages(groupId)
     }
 
-    fun getChatConversations(): LiveData<List<ChatConversation>> {
-        return conversationDao.getChatConversations(networkManager.getUserId())
+    fun getChatConversations(currentUserId: Int): LiveData<List<ChatConversation>> {
+        return conversationDao.getChatConversations(currentUserId)
     }
     
     suspend fun sendMessage(recipientId: Int, content: String): Boolean = withContext(Dispatchers.IO) {
@@ -90,19 +90,117 @@ class ChatRepository(
     suspend fun receiveMessage(senderId: Int, content: String, timestamp: Long, groupId: Int? = null, recipientId: Int? = null) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d(TAG, "receiveMessage: sender=$senderId, recipient=${recipientId ?: networkManager.getUserId()}, content=$content, timestamp=$timestamp")
-                val message = Message(
-                    senderId = senderId,
-                    recipientId = recipientId ?: networkManager.getUserId(),
-                    groupId = groupId,
-                    content = content,
-                    timestamp = timestamp,
-                    isSent = true,
-                    isDelivered = true
-                )
-                
-                val insertedId = messageDao.insertMessage(message)
-                Log.d(TAG, "receiveMessage: Message inserted/ignored with id=$insertedId")
+                Log.d(TAG, "receiveMessage: sender=$senderId, recipient=${recipientId ?: networkManager.getUserId()}, content=$content, timestamp=$timestamp, groupId=$groupId")
+
+                // If this is a group message, ensure we have a local Group and GroupMember record
+                if (groupId != null) {
+                    try {
+                        val existingGroup = groupDao.getGroup(groupId)
+                        if (existingGroup == null) {
+                            // Create a lightweight placeholder Group so the UI can show it
+                            val placeholder = Group(id = groupId, name = "Group $groupId", creatorId = senderId, memberCount = 1)
+                            groupDao.insertGroup(placeholder)
+                            Log.d(TAG, "receiveMessage: Inserted placeholder group id=$groupId")
+                        }
+
+                        val existingMember = groupMemberDao.getMember(groupId, networkManager.getUserId())
+                        if (existingMember == null) {
+                            val gm = GroupMember(
+                                groupId = groupId,
+                                userId = networkManager.getUserId(),
+                                username = "Me",
+                                nickname = null,
+                                isAdmin = false,
+                                joinedAt = System.currentTimeMillis()
+                            )
+                            groupMemberDao.insertMember(gm)
+                            Log.d(TAG, "receiveMessage: Inserted local group member record for group=$groupId user=${networkManager.getUserId()}")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error ensuring local group membership", e)
+                    }
+                }
+
+                // Deduplicate incoming live messages by checking for a recent matching message
+                if (groupId != null) {
+                    // For group messages, dedupe by senderId + groupId + content
+                    val existing = messageDao.findLatestMatchingGroupMessage(senderId, groupId, content)
+                    if (existing != null) {
+                        val diff = kotlin.math.abs(existing.timestamp - timestamp)
+                        if (diff < 15000) {
+                            if (!existing.isDelivered || !existing.isSent) {
+                                val updated = existing.copy(isSent = true, isDelivered = true)
+                                messageDao.updateMessage(updated)
+                                Log.d(TAG, "receiveMessage: Updated existing group message id=${existing.id} (dedup)")
+                            } else {
+                                Log.d(TAG, "receiveMessage: Duplicate live group message ignored id=${existing.id}")
+                            }
+                        } else {
+                            val message = Message(
+                                senderId = senderId,
+                                recipientId = networkManager.getUserId(),
+                                groupId = groupId,
+                                content = content,
+                                timestamp = timestamp,
+                                isSent = true,
+                                isDelivered = true
+                            )
+                            val insertedId = messageDao.insertMessage(message)
+                            Log.d(TAG, "receiveMessage: Inserted new group message id=$insertedId")
+                        }
+                    } else {
+                        val message = Message(
+                            senderId = senderId,
+                            recipientId = networkManager.getUserId(),
+                            groupId = groupId,
+                            content = content,
+                            timestamp = timestamp,
+                            isSent = true,
+                            isDelivered = true
+                        )
+                        val insertedId = messageDao.insertMessage(message)
+                        Log.d(TAG, "receiveMessage: Group message inserted id=$insertedId")
+                    }
+                } else {
+                    val targetRecipient = recipientId ?: networkManager.getUserId()
+                    val existing = messageDao.findLatestMatchingMessage(senderId, targetRecipient, content)
+                    if (existing != null) {
+                        val diff = kotlin.math.abs(existing.timestamp - timestamp)
+                        if (diff < 15000) {
+                            if (!existing.isDelivered || !existing.isSent) {
+                                val updated = existing.copy(isSent = true, isDelivered = true)
+                                messageDao.updateMessage(updated)
+                                Log.d(TAG, "receiveMessage: Updated existing message id=${existing.id} (dedup)")
+                            } else {
+                                Log.d(TAG, "receiveMessage: Duplicate live message ignored id=${existing.id}")
+                            }
+                        } else {
+                            val message = Message(
+                                senderId = senderId,
+                                recipientId = targetRecipient,
+                                groupId = null,
+                                content = content,
+                                timestamp = timestamp,
+                                isSent = true,
+                                isDelivered = true
+                            )
+                            val insertedId = messageDao.insertMessage(message)
+                            Log.d(TAG, "receiveMessage: Inserted new message id=$insertedId")
+                        }
+                    } else {
+                        val message = Message(
+                            senderId = senderId,
+                            recipientId = targetRecipient,
+                            groupId = null,
+                            content = content,
+                            timestamp = timestamp,
+                            isSent = true,
+                            isDelivered = true
+                        )
+                        val insertedId = messageDao.insertMessage(message)
+                        Log.d(TAG, "receiveMessage: Message inserted id=$insertedId")
+                    }
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "Error receiving message", e)
             }
@@ -252,7 +350,7 @@ class ChatRepository(
     }
     
     // Group operations
-    fun getAllGroups(): LiveData<List<Group>> = groupDao.getAllGroups()
+    fun getAllGroups(userId: Int): LiveData<List<Group>> = groupDao.getAllGroupsForUser(userId)
     
     fun getGroupMembers(groupId: Int): LiveData<List<GroupMember>> {
         return groupMemberDao.getGroupMembers(groupId)

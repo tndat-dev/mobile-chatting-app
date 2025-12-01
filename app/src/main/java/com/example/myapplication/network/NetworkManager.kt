@@ -50,12 +50,20 @@ class NetworkManager private constructor() {
         const val MESSAGE_RECEIVED = 0x21
         const val TYPING_STATUS = 0x22
         const val GET_CONVERSATION_HISTORY = 0x23
+        const val GET_GROUP_HISTORY = 0x35
+        const val GET_USER_GROUPS = 0x36
         const val DELETE_CONVERSATION = 0x24
         const val CREATE_GROUP = 0x30
         const val INVITE_TO_GROUP = 0x31
+        const val ACCEPT_GROUP_INVITE = 0x3A
+        const val DECLINE_GROUP_INVITE = 0x3B
         const val REMOVE_FROM_GROUP = 0x32
         const val LEAVE_GROUP = 0x33
         const val GROUP_MESSAGE = 0x34
+        // Client-only convenience actions (server-side handlers may be required)
+        const val ADD_GROUP_MEMBERS = 0x37
+        const val RENAME_GROUP = 0x38
+        const val SET_GROUP_NICKNAME = 0x39
         const val USER_ONLINE = 0x40
         const val USER_OFFLINE = 0x41
         const val SUCCESS = 0xF0
@@ -176,6 +184,15 @@ class NetworkManager private constructor() {
         val payload = "otherUserId=$otherUserId&limit=$limit"
         return sendMessage(MessageType.GET_CONVERSATION_HISTORY, payload)
     }
+
+    fun getGroupHistory(groupId: Int, limit: Int = 50): Boolean {
+        val payload = "groupId=$groupId&limit=$limit"
+        return sendMessage(MessageType.GET_GROUP_HISTORY, payload)
+    }
+
+    fun getUserGroups(): Boolean {
+        return sendMessage(MessageType.GET_USER_GROUPS, "")
+    }
     
     fun deleteConversation(otherUserId: Int): Boolean {
         val payload = "otherUserId=$otherUserId"
@@ -200,6 +217,36 @@ class NetworkManager private constructor() {
     fun inviteToGroup(groupId: Int, userId: Int): Boolean {
         val payload = "groupId=$groupId&userId=$userId"
         return sendMessage(MessageType.INVITE_TO_GROUP, payload)
+    }
+
+    fun acceptGroupInvite(groupId: Int): Boolean {
+        val payload = "groupId=$groupId"
+        return sendMessage(MessageType.ACCEPT_GROUP_INVITE, payload)
+    }
+
+    fun declineGroupInvite(groupId: Int): Boolean {
+        val payload = "groupId=$groupId"
+        return sendMessage(MessageType.DECLINE_GROUP_INVITE, payload)
+    }
+
+    fun addGroupMembers(groupId: Int, userIds: List<Int>): Boolean {
+        // Send individual invites for now (server supports INVITE_TO_GROUP)
+        var ok = true
+        for (uid in userIds) {
+            val res = inviteToGroup(groupId, uid)
+            if (!res) ok = false
+        }
+        return ok
+    }
+
+    fun renameGroup(groupId: Int, newName: String): Boolean {
+        val payload = "groupId=$groupId&name=${java.net.URLEncoder.encode(newName, "UTF-8")}" 
+        return sendMessage(MessageType.RENAME_GROUP, payload)
+    }
+
+    fun setGroupNickname(groupId: Int, userId: Int, nickname: String): Boolean {
+        val payload = "groupId=$groupId&userId=$userId&nick=${java.net.URLEncoder.encode(nickname, "UTF-8")}" 
+        return sendMessage(MessageType.SET_GROUP_NICKNAME, payload)
     }
     
     fun removeFromGroup(groupId: Int, userId: Int): Boolean {

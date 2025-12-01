@@ -212,6 +212,8 @@ class LoginActivity : AppCompatActivity(), NetworkManager.MessageCallback {
                 // Ngay sau khi login thành công, gọi lấy danh sách bạn bè/pending
                 // để bắt kịp các FRIEND_REQUEST đến sớm trong quá trình login
                 networkManager.getFriendsList()
+                // Also request user's groups so the client populates local Room with groups persisted on the server
+                networkManager.getUserGroups()
                 
                 Toast.makeText(this@LoginActivity, "Success!", Toast.LENGTH_SHORT).show()
                 navigateToMain()

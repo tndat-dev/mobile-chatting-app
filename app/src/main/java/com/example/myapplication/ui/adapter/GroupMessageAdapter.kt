@@ -37,19 +37,22 @@ class GroupMessageAdapter(
             if (message.isMine) {
                 layoutParams.gravity = Gravity.END
                 messageContainer.setBackgroundResource(R.drawable.bg_message_sent)
+                // For own messages we do not show the sender name (message only)
                 tvSenderName.visibility = View.GONE
             } else {
                 layoutParams.gravity = Gravity.START
                 messageContainer.setBackgroundResource(R.drawable.bg_message_received)
                 tvSenderName.visibility = View.VISIBLE
                 tvSenderName.text = message.senderName
+                // align sender name to start for others
+                tvSenderName.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
             }
             messageContainer.layoutParams = layoutParams
         }
         
         private fun formatTimestamp(timestamp: Long): String {
             val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-            return sdf.format(Date(timestamp * 1000))
+            return sdf.format(Date(timestamp))
         }
     }
     

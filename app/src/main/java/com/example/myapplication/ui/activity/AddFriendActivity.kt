@@ -14,6 +14,9 @@ import com.example.myapplication.ui.adapter.UserItem
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.example.myapplication.data.repository.SessionManager
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AddFriendActivity : AppCompatActivity() {
     private lateinit var networkManager: NetworkManager
@@ -23,6 +26,8 @@ class AddFriendActivity : AppCompatActivity() {
     private lateinit var adapter: UsersAdapter
     private val usersList = mutableListOf<UserItem>()
     
+    private var targetGroupId: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_friend)
@@ -47,7 +52,9 @@ class AddFriendActivity : AppCompatActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Search & Add Friend"
+        // If this activity was opened to add members to a group, read the groupId
+        targetGroupId = intent.getIntExtra("groupId", 0)
+        supportActionBar?.title = if (targetGroupId > 0) "Add Members" else "Search & Add Friend"
         
         searchInput = findViewById(R.id.etSearch)
         recyclerView = findViewById(R.id.rvUsers)
@@ -119,6 +126,27 @@ class AddFriendActivity : AppCompatActivity() {
             val username = pairs["name$i"] ?: continue
             val isFriend = pairs["isFriend$i"] == "1"
             usersList.add(UserItem(userId, username, isFriend))
+            // Persist into users table so other screens can resolve usernames
+            try {
+                val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this)
+                val user = com.example.myapplication.data.model.User(
+                    id = userId,
+                    username = username,
+                    email = "",
+                    isOnline = false,
+                    lastSeen = System.currentTimeMillis()
+                )
+                // Insert on background thread
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        db.userDao().insertUser(user)
+                    } catch (e: Exception) {
+                        // ignore
+                    }
+                }
+            } catch (e: Exception) {
+                // ignore
+            }
         }
         
         adapter.notifyDataSetChanged()
@@ -126,16 +154,50 @@ class AddFriendActivity : AppCompatActivity() {
         if (usersList.isEmpty()) {
             Toast.makeText(this, "No users found", Toast.LENGTH_SHORT).show()
         }
+
+        // If we are adding to a group, remove users who are already group members
+        if (targetGroupId > 0) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this@AddFriendActivity)
+                    val toRemove = mutableListOf<UserItem>()
+                    for (u in usersList) {
+                        val member = db.groupMemberDao().getMember(targetGroupId, u.userId)
+                        if (member != null) {
+                            toRemove.add(u)
+                        }
+                    }
+                    if (toRemove.isNotEmpty()) {
+                        runOnUiThread {
+                            usersList.removeAll(toRemove)
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                } catch (e: Exception) {
+                    // ignore filtering errors
+                }
+            }
+        }
     }
     
     private fun onUserClick(user: UserItem) {
-        if (user.isFriend) {
-            Toast.makeText(this, "Already friends with ${user.username}", Toast.LENGTH_SHORT).show()
+            if (targetGroupId > 0) {
+                // Invite user to the group — do NOT insert locally; wait for acceptance
+                val invited = networkManager.inviteToGroup(targetGroupId, user.userId)
+                if (invited) {
+                    Toast.makeText(this, "Invited ${user.username} to group", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to invite ${user.username}", Toast.LENGTH_SHORT).show()
+                }
         } else {
-            if (networkManager.sendFriendRequest(user.username)) {
-                Toast.makeText(this, "Friend request sent to ${user.username}", Toast.LENGTH_SHORT).show()
+            if (user.isFriend) {
+                Toast.makeText(this, "Already friends with ${user.username}", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Failed to send friend request", Toast.LENGTH_SHORT).show()
+                if (networkManager.sendFriendRequest(user.username)) {
+                    Toast.makeText(this, "Friend request sent to ${user.username}", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to send friend request", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

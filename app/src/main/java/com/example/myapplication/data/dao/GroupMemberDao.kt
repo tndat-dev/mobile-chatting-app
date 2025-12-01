@@ -23,4 +23,10 @@ interface GroupMemberDao {
     
     @Query("SELECT COUNT(*) FROM group_members WHERE groupId = :groupId")
     suspend fun getMemberCount(groupId: Int): Int
+
+    @Query("SELECT * FROM group_members WHERE groupId = :groupId ORDER BY username ASC")
+    suspend fun getMembersList(groupId: Int): List<GroupMember>
+
+    @Query("SELECT * FROM group_members WHERE groupId = :groupId AND userId = :userId LIMIT 1")
+    suspend fun getMember(groupId: Int, userId: Int): GroupMember?
 }

@@ -129,6 +129,19 @@ chat_server/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chat_server.dir/build.make CMakeFiles/chat_server.dir/build
 .PHONY : chat_server/fast
 
+#=============================================================================
+# Target rules for targets named test_client
+
+# Build rule for target.
+test_client: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_client
+.PHONY : test_client
+
+# fast build rule for target.
+test_client/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/build
+.PHONY : test_client/fast
+
 src/logger.o: src/logger.cpp.o
 .PHONY : src/logger.o
 
@@ -207,6 +220,7 @@ src/network_utils.o: src/network_utils.cpp.o
 # target to build an object file
 src/network_utils.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chat_server.dir/build.make CMakeFiles/chat_server.dir/src/network_utils.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/network_utils.cpp.o
 .PHONY : src/network_utils.cpp.o
 
 src/network_utils.i: src/network_utils.cpp.i
@@ -215,6 +229,7 @@ src/network_utils.i: src/network_utils.cpp.i
 # target to preprocess a source file
 src/network_utils.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chat_server.dir/build.make CMakeFiles/chat_server.dir/src/network_utils.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/network_utils.cpp.i
 .PHONY : src/network_utils.cpp.i
 
 src/network_utils.s: src/network_utils.cpp.s
@@ -223,6 +238,7 @@ src/network_utils.s: src/network_utils.cpp.s
 # target to generate assembly for a file
 src/network_utils.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chat_server.dir/build.make CMakeFiles/chat_server.dir/src/network_utils.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/network_utils.cpp.s
 .PHONY : src/network_utils.cpp.s
 
 src/persistence.o: src/persistence.cpp.o
@@ -321,6 +337,30 @@ src/utils.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/chat_server.dir/build.make CMakeFiles/chat_server.dir/src/utils.cpp.s
 .PHONY : src/utils.cpp.s
 
+tools/test_client.o: tools/test_client.cpp.o
+.PHONY : tools/test_client.o
+
+# target to build an object file
+tools/test_client.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/tools/test_client.cpp.o
+.PHONY : tools/test_client.cpp.o
+
+tools/test_client.i: tools/test_client.cpp.i
+.PHONY : tools/test_client.i
+
+# target to preprocess a source file
+tools/test_client.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/tools/test_client.cpp.i
+.PHONY : tools/test_client.cpp.i
+
+tools/test_client.s: tools/test_client.cpp.s
+.PHONY : tools/test_client.s
+
+# target to generate assembly for a file
+tools/test_client.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/tools/test_client.cpp.s
+.PHONY : tools/test_client.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -330,6 +370,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... chat_server"
+	@echo "... test_client"
 	@echo "... src/logger.o"
 	@echo "... src/logger.i"
 	@echo "... src/logger.s"
@@ -354,6 +395,9 @@ help:
 	@echo "... src/utils.o"
 	@echo "... src/utils.i"
 	@echo "... src/utils.s"
+	@echo "... tools/test_client.o"
+	@echo "... tools/test_client.i"
+	@echo "... tools/test_client.s"
 .PHONY : help
 
 

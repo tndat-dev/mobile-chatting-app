@@ -1,0 +1,15 @@
+[PERSISTENCE] Connected to PostgreSQL successfully
+[C++ SERVER] Connected to PostgreSQL successfully
+[C++ SERVER] Loaded user: alice (id=2, 2 friends)
+[C++ SERVER] Loaded user: dat (id=1, 3 friends)
+[C++ SERVER] Loaded user: dat2 (id=10, 1 friends)
+[C++ SERVER] Loaded user: quang (id=9, 2 friends)
+[C++ SERVER] Loaded 4 users from database
+[C++ SERVER] Listening on 0.0.0.0:8080
+[C++ SERVER] Client connected from 127.0.0.1:49622
+[C++ SERVER] handle_client started for fd=5
+[C++ SERVER] Received: magic=0x43484154 version=1 type=54 length=0
+[C++ SERVER] Sending response: type=240 (SUCCESS), userId=0, payload_len=2193
+[C++ SERVER] Response payload: count=31&groupId0=33&name0=Group1&memberCount0=1&members0=1&memberNicks0=&groupId1=25&name1=Group2&memberCount1=1&members1=1&memberNicks1=&groupId2=16&name2=groups&memberCount2=4&members2=2,1,10,9&memberNicks2=&groupId3=2&name3=h&memberCount3=4&members3=2,1,10,9&memberNicks3=&groupId4=4&name4=hell&memberCount4=4&members4=2,1,10,9&memberNicks4=&groupId5=5&name5=hell&memberCount5=4&members5=2,1,10,9&memberNicks5=&groupId6=31&name6=Hello&memberCount6=1&members6=1&memberNicks6=&groupId7=24&name7=ll&memberCount7=1&members7=1&memberNicks7=ZGF0MQ==&groupId8=23&name8=ll&memberCount8=1&members8=1&memberNicks8=&groupId9=27&name9=OOP&memberCount9=1&members9=1&memberNicks9=&groupId10=20&name10=pleas&memberCount10=4&members10=2,1,10,9&memberNicks10=&groupId11=21&name11=please&memberCount11=1&members11=1&memberNicks11=&groupId12=6&name12=please&memberCount12=3&members12=1,10,9&memberNicks12=&groupId13=30&name13=please&memberCount13=1&members13=1&memberNicks13=bG1hbw==&groupId14=29&name14=please&memberCount14=1&members14=1&memberNicks14=&groupId15=28&name15=Please&memberCount15=1&members15=1&memberNicks15=&groupId16=17&name16=pls&memberCount16=4&members16=2,1,10,9&memberNicks16=&groupId17=7&name17=pls&memberCount17=3&members17=1,10,9&memberNicks17=&groupId18=8&name18=pls&memberCount18=4&members18=2,1,10,9&memberNicks18=&groupId19=9&name19=pls&memberCount19=4&members19=2,1,10,9&memberNicks19=&groupId20=10&name20=pls&memberCount20=4&members20=2,1,10,9&memberNicks20=&groupId21=11&name21=pls&memberCount21=4&members21=2,1,10,9&memberNicks21=&groupId22=12&name22=pls&memberCount22=4&members22=2,1,10,9&memberNicks22=&groupId23=13&name23=pls&memberCount23=3&members23=2,1,10&memberNicks23=&groupId24=14&name24=pls&memberCount24=4&members24=2,1,10,9&memberNicks24=&groupId25=15&name25=pls&memberCount25=4&members25=2,1,10,9&memberNicks25=&groupId26=1&name26=pls&memberCount26=4&members26=2,1,10,9&memberNicks26=&groupId27=18&name27=pls&memberCount27=4&members27=2,1,10,9&memberNicks27=&groupId28=19&name28=pls&memberCount28=3&members28=2,1,10&memberNicks28=&groupId29=22&name29=pls&memberCount29=1&members29=1&memberNicks29=&groupId30=26&name30=vf&memberCount30=1&members30=1&memberNicks30=
+[C++ SERVER] Response sent successfully
+[C++ SERVER] Connection closed or error, fd=5

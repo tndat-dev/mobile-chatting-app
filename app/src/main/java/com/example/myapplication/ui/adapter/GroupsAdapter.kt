@@ -14,8 +14,7 @@ data class Group(
 )
 
 class GroupsAdapter(
-    private val onItemClick: (Group) -> Unit,
-    private val onLeaveClick: (Group) -> Unit
+    private val onItemClick: (Group) -> Unit
 ) : ListAdapter<Group, GroupsAdapter.GroupViewHolder>(GroupDiffCallback()) {
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
@@ -46,9 +45,7 @@ class GroupsAdapter(
                 onItemClick(group)
             }
             
-            binding.btnLeave.setOnClickListener {
-                onLeaveClick(group)
-            }
+            // Leave button removed; tapping the item opens the group chat
         }
     }
     

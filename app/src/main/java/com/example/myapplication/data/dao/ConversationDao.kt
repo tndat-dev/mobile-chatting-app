@@ -40,16 +40,48 @@ interface ConversationDao {
                 ) THEN 1 
                 ELSE 0 
             END AS hasUnread,
-            f.isOnline AS isOnline
-        FROM friends f
+            f.isOnline AS isOnline,
+            0 AS isGroup,
+            NULL AS groupId
+                    FROM friends f
+                WHERE EXISTS (
+                        SELECT 1 FROM messages m_exist
+                        WHERE m_exist.groupId IS NULL
+                            AND (
+                                        (m_exist.senderId = f.userId AND m_exist.recipientId = :currentUserId)
+                                 OR (m_exist.senderId = :currentUserId AND m_exist.recipientId = f.userId)
+                            )
+                )
+        
+        UNION ALL
+        
+        SELECT 
+            g.id AS userId,
+            g.name AS username,
+            (
+                SELECT content FROM messages m5
+                WHERE m5.groupId = g.id
+                ORDER BY m5.timestamp DESC
+                LIMIT 1
+            ) AS lastMessage,
+            (
+                SELECT MAX(m6.timestamp) FROM messages m6
+                WHERE m6.groupId = g.id
+            ) AS lastMessageTime,
+            0 AS hasUnread,
+            0 AS isOnline,
+            1 AS isGroup,
+            g.id AS groupId
+        FROM groups g
         WHERE EXISTS (
-            SELECT 1 FROM messages m 
-            WHERE m.groupId IS NULL 
-              AND (
-                    (m.senderId = f.userId AND m.recipientId = :currentUserId)
-                 OR (m.senderId = :currentUserId AND m.recipientId = f.userId)
-              )
+            SELECT 1 FROM group_members gm
+            WHERE gm.groupId = g.id AND gm.userId = :currentUserId
         )
+        AND EXISTS (
+            SELECT 1 FROM messages m_group_exist
+            WHERE m_group_exist.groupId = g.id
+        )
+        
         ORDER BY lastMessageTime DESC
         """
     )

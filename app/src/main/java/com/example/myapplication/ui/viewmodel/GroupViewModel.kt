@@ -34,7 +34,9 @@ class GroupViewModel(application: Application) : AndroidViewModel(application) {
     val operationStatus: LiveData<Pair<Boolean, String>> = _operationStatus
     
     fun getAllGroups(): LiveData<List<Group>> {
-        return repository.getAllGroups()
+        val sessionManager = com.example.myapplication.data.repository.SessionManager.getInstance(getApplication())
+        val uid = sessionManager.getUserId()
+        return repository.getAllGroups(uid)
     }
     
     fun getGroupMembers(groupId: Int): LiveData<List<GroupMember>> {
