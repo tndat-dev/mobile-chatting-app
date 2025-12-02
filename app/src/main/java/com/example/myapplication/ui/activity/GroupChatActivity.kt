@@ -88,7 +88,20 @@ class GroupChatActivity : AppCompatActivity() {
             messagesList.clear()
 
             dbMessages.forEach { m ->
-                if (m.senderId == myUserId) {
+                // Check if this is a system message (senderId = 0)
+                if (m.senderId == 0) {
+                    // System message — show as centered notification
+                    messagesList.add(
+                        GroupMessage(
+                            senderId = m.senderId,
+                            senderName = "",
+                            message = m.content,
+                            timestamp = m.timestamp,
+                            isMine = false,
+                            isSystemMessage = true
+                        )
+                    )
+                } else if (m.senderId == myUserId) {
                     // own message — we have the username locally
                     messagesList.add(
                         GroupMessage(
@@ -96,7 +109,8 @@ class GroupChatActivity : AppCompatActivity() {
                             senderName = myUsername,
                             message = m.content,
                             timestamp = m.timestamp,
-                            isMine = true
+                            isMine = true,
+                            isSystemMessage = false
                         )
                     )
                 } else {
@@ -107,7 +121,8 @@ class GroupChatActivity : AppCompatActivity() {
                         senderName = "User ${m.senderId}",
                         message = m.content,
                         timestamp = m.timestamp,
-                        isMine = false
+                        isMine = false,
+                        isSystemMessage = false
                     )
                     val index = messagesList.size
                     messagesList.add(placeholder)
@@ -160,14 +175,14 @@ class GroupChatActivity : AppCompatActivity() {
                         NetworkManager.MessageType.SUCCESS -> {
                             // Possibly a group history response — detect pattern
                             try {
-                                // server may order keys differently; check existence of required keys
+                                // Parse payload into map first
+                                val pairs = payload.split("&").mapNotNull {
+                                    val parts = it.split("=", limit = 2)
+                                    if (parts.size == 2) parts[0] to parts[1] else null
+                                }.toMap()
+                                
+                                // Handle group history response
                                 if (payload.contains("groupId=") && payload.contains("count=") && payload.contains("from0=") && payload.contains("content0=")) {
-                                    // parse payload into map
-                                    val pairs = payload.split("&").mapNotNull {
-                                        val parts = it.split("=", limit = 2)
-                                        if (parts.size == 2) parts[0] to parts[1] else null
-                                    }.toMap()
-
                                     val respGroupId = pairs["groupId"]?.toIntOrNull()
                                     if (respGroupId != null && respGroupId == groupId) {
                                         val count = pairs["count"]?.toIntOrNull() ?: 0
@@ -181,6 +196,31 @@ class GroupChatActivity : AppCompatActivity() {
                                             chatViewModel.receiveMessage(fromId, content, tsMillis, groupId)
                                         }
                                         Toast.makeText(this@GroupChatActivity, "Loaded $count messages from group history", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                
+                                // Handle rename notification: update title bar immediately
+                                if (pairs["action"] == "renamed" && pairs.containsKey("groupId") && pairs.containsKey("name")) {
+                                    val notifGroupId = pairs["groupId"]?.toIntOrNull()
+                                    if (notifGroupId == groupId) {
+                                        val newName = pairs["name"] ?: ""
+                                        if (newName.isNotEmpty()) {
+                                            groupName = newName
+                                            val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
+                                            toolbar.title = newName
+                                            // Also update local DB
+                                            lifecycleScope.launch(Dispatchers.IO) {
+                                                try {
+                                                    val db = ChatDatabase.getDatabase(this@GroupChatActivity)
+                                                    val g = db.groupDao().getGroup(groupId)
+                                                    if (g != null) {
+                                                        db.groupDao().updateGroup(g.copy(name = newName))
+                                                    }
+                                                } catch (e: Exception) {
+                                                    // ignore
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             } catch (e: Exception) {
@@ -216,7 +256,8 @@ class GroupChatActivity : AppCompatActivity() {
             senderName = myUsername,
             message = message,
             timestamp = timestamp,
-            isMine = true
+            isMine = true,
+            isSystemMessage = false
         )
 
         // Optimistic UI update
@@ -261,6 +302,9 @@ class GroupChatActivity : AppCompatActivity() {
         val message = pairs["message"] ?: return
         val timestamp = pairs["timestamp"]?.toLongOrNull() ?: System.currentTimeMillis()
         
+        // Check if this is a system message (senderId = 0)
+        val isSystemMessage = (senderId == 0)
+        
             // Persist incoming group message to local DB (use ViewModel to reuse dedup logic)
             try {
                 // convert timestamp to milliseconds if server sent seconds
@@ -270,15 +314,65 @@ class GroupChatActivity : AppCompatActivity() {
                 // ignore persistence errors
             }
 
+        // System messages: always show them as centered notifications
+        if (isSystemMessage) {
+            val systemMsg = GroupMessage(
+                senderId = senderId,
+                senderName = "",
+                message = message,
+                timestamp = timestamp,
+                isMine = false,
+                isSystemMessage = true
+            )
+            messagesList.add(systemMsg)
+            adapter.notifyItemInserted(messagesList.size - 1)
+            recyclerView.scrollToPosition(messagesList.size - 1)
+            
+            // Parse system message to update local database state
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val db = ChatDatabase.getDatabase(this@GroupChatActivity)
+                    
+                    // Pattern: "X removed Y from the group"
+                    if (message.contains(" removed ") && message.contains(" from the group")) {
+                        val parts = message.split(" removed ")
+                        if (parts.size == 2) {
+                            val removedUsername = parts[1].replace(" from the group", "").trim()
+                            // Find user ID by username and remove from group
+                            val member = db.groupMemberDao().getMembersList(groupId)
+                                .find { it.username.equals(removedUsername, ignoreCase = true) }
+                            if (member != null) {
+                                db.groupMemberDao().removeMember(groupId, member.userId)
+                            }
+                        }
+                    }
+                    // Pattern: "X made Y an admin"
+                    else if (message.contains(" made ") && message.contains(" an admin")) {
+                        val parts = message.split(" made ")
+                        if (parts.size == 2) {
+                            val adminUsername = parts[1].replace(" an admin", "").trim()
+                            // Find user and update admin status
+                            val member = db.groupMemberDao().getMembersList(groupId)
+                                .find { it.username.equals(adminUsername, ignoreCase = true) }
+                            if (member != null) {
+                                db.groupMemberDao().updateMember(member.copy(isAdmin = true))
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    // ignore parsing errors
+                }
+            }
+        } else if (senderId != myUserId) {
             // Don't show our own messages again (already added in sendMessage)
-            if (senderId != myUserId) {
             // resolve sender username from local DB; show placeholder while loading
             val placeholder = GroupMessage(
                 senderId = senderId,
                 senderName = "User $senderId",
                 message = message,
                 timestamp = timestamp,
-                isMine = false
+                isMine = false,
+                isSystemMessage = false
             )
             val index = messagesList.size
             messagesList.add(placeholder)
@@ -351,23 +445,29 @@ class GroupChatActivity : AppCompatActivity() {
             .setPositiveButton("OK") { _, _ ->
                 val newName = input.text.toString().trim()
                 if (newName.isNotEmpty()) {
-                    val db = ChatDatabase.getDatabase(this)
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch {
                         try {
-                            val g = db.groupDao().getGroup(groupId)
-                            if (g != null) {
-                                db.groupDao().updateGroup(g.copy(name = newName))
-                            } else {
-                                db.groupDao().insertGroup(com.example.myapplication.data.model.Group(id = groupId, name = newName, creatorId = myUserId))
-                            }
-                            launch(Dispatchers.Main) {
+                            // Send rename request to server first
+                            val success = networkManager.renameGroup(groupId, newName)
+                            if (success) {
+                                // Server will broadcast system message and rename notification to all members
+                                // Update local DB and UI immediately for responsive feel
+                                val db = ChatDatabase.getDatabase(this@GroupChatActivity)
+                                val g = db.groupDao().getGroup(groupId)
+                                if (g != null) {
+                                    db.groupDao().updateGroup(g.copy(name = newName))
+                                } else {
+                                    db.groupDao().insertGroup(com.example.myapplication.data.model.Group(id = groupId, name = newName, creatorId = myUserId))
+                                }
                                 groupName = newName
                                 val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
                                 toolbar.title = newName
                                 Toast.makeText(this@GroupChatActivity, "Group renamed", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@GroupChatActivity, "Failed to rename group", Toast.LENGTH_SHORT).show()
                             }
                         } catch (e: Exception) {
-                            // ignore
+                            Toast.makeText(this@GroupChatActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -393,6 +493,9 @@ class GroupChatActivity : AppCompatActivity() {
 
             // Backing list that we can update as names are resolved
             val list = baseList
+            // Determine if current user is admin (viewer)
+            val viewerIsAdmin = baseList.any { it.userId == sessionManager.getUserId() && it.isAdmin }
+
             val adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
                 override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
                     val v = layoutInflater.inflate(R.layout.item_member_view, parent, false)
@@ -408,10 +511,10 @@ class GroupChatActivity : AppCompatActivity() {
                     val displayName = if (item.userId == -1) {
                         "Add members"
                     } else {
-                        // Prefer explicit nickname, then stored username, but if the member is the current user
-                        // and the stored username is a placeholder like "User {id}", use the session username.
+                        // Always show username in members dialog, not nickname
+                        // If the member is the current user and the stored username is a placeholder like "User {id}", use the session username.
                         val sessName = sessionManager.getUsername() ?: "Me"
-                        val uname = item.nickname ?: item.username
+                        val uname = item.username
                         if (item.userId == sessionManager.getUserId() && (uname == null || uname.startsWith("User "))) {
                             sessName
                         } else {
@@ -419,14 +522,83 @@ class GroupChatActivity : AppCompatActivity() {
                         }
                     }
                     tvName.text = displayName
-                    tvSubtitle.text = ""
+                    // Show Admin label under username when applicable
+                    tvSubtitle.text = if (item.isAdmin) "Admin" else ""
                     ivAvatar.setImageResource(if (item.userId == -1) R.drawable.ic_add_person else R.drawable.ic_user_placeholder)
                     v.setOnClickListener {
                         if (item.userId == -1) {
                             openAddMembers()
                         } else {
-                            // Future: show member actions (message, view profile, remove)
+                            // Short click: maybe future profile view
                         }
+                    }
+
+                    v.setOnLongClickListener {
+                        if (item.userId == -1) {
+                            openAddMembers(); return@setOnLongClickListener true
+                        }
+
+                        // Build actions depending on viewer permissions
+                        val actions = mutableListOf<String>()
+                        actions.add("Message")
+                        if (viewerIsAdmin && item.userId != sessionManager.getUserId()) {
+                            if (!item.isAdmin) actions.add("Make admin")
+                            actions.add("Remove from group")
+                        }
+
+                        if (actions.isEmpty()) return@setOnLongClickListener true
+
+                        AlertDialog.Builder(this@GroupChatActivity)
+                            .setTitle(item.username ?: "Member")
+                            .setItems(actions.toTypedArray()) { _, which ->
+                                val choice = actions[which]
+                                when (choice) {
+                                    "Message" -> {
+                                        // open direct chat or show toast for now
+                                        Toast.makeText(this@GroupChatActivity, "Message ${item.username}", Toast.LENGTH_SHORT).show()
+                                    }
+                                    "Make admin" -> {
+                                        lifecycleScope.launch(Dispatchers.IO) {
+                                            try {
+                                                val ok = networkManager.makeAdmin(groupId, item.userId)
+                                                launch(Dispatchers.Main) {
+                                                    if (ok) Toast.makeText(this@GroupChatActivity, "Promoted to admin", Toast.LENGTH_SHORT).show()
+                                                    else Toast.makeText(this@GroupChatActivity, "Failed to promote", Toast.LENGTH_SHORT).show()
+                                                }
+                                            } catch (e: Exception) {
+                                                launch(Dispatchers.Main) {
+                                                    Toast.makeText(this@GroupChatActivity, "Network error", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "Remove from group" -> {
+                                        AlertDialog.Builder(this@GroupChatActivity)
+                                            .setTitle("Remove member")
+                                            .setMessage("Remove ${item.username} from the group?")
+                                            .setPositiveButton("Remove") { _, _ ->
+                                                lifecycleScope.launch(Dispatchers.IO) {
+                                                    try {
+                                                        val ok = networkManager.removeFromGroup(groupId, item.userId)
+                                                        launch(Dispatchers.Main) {
+                                                            if (ok) Toast.makeText(this@GroupChatActivity, "Member removed", Toast.LENGTH_SHORT).show()
+                                                            else Toast.makeText(this@GroupChatActivity, "Failed to remove", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    } catch (e: Exception) {
+                                                        launch(Dispatchers.Main) {
+                                                            Toast.makeText(this@GroupChatActivity, "Network error", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            .setNegativeButton("Cancel", null)
+                                            .show()
+                                    }
+                                }
+                            }
+                            .show()
+
+                        true
                     }
                 }
 

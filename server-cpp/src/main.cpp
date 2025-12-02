@@ -82,6 +82,9 @@ int main() {
           auto members = pg_persistence->get_group_members(g.id);
           for (const auto& m : members) {
             dg.members[m.id] = true;
+            // Load admin status for each member
+            bool is_admin = pg_persistence->is_group_admin(g.id, m.id);
+            dg.admins[m.id] = is_admin;
           }
           server_state::g_groups[g.id] = std::move(dg);
           if (g.id >= server_state::g_next_group_id) server_state::g_next_group_id = g.id + 1;

@@ -16,12 +16,18 @@ data class GroupMessage(
     val senderName: String,
     val message: String,
     val timestamp: Long,
-    val isMine: Boolean
+    val isMine: Boolean,
+    val isSystemMessage: Boolean = false
 )
 
 class GroupMessageAdapter(
     private val messages: List<GroupMessage>
-) : RecyclerView.Adapter<GroupMessageAdapter.MessageViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    
+    companion object {
+        private const val VIEW_TYPE_MESSAGE = 0
+        private const val VIEW_TYPE_SYSTEM = 1
+    }
     
     inner class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvSenderName: TextView = view.findViewById(R.id.tvSenderName)
@@ -56,14 +62,35 @@ class GroupMessageAdapter(
         }
     }
     
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_group_message, parent, false)
-        return MessageViewHolder(view)
+    inner class SystemMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvSystemMessage: TextView = view.findViewById(R.id.tvSystemMessage)
+        
+        fun bind(message: GroupMessage) {
+            tvSystemMessage.text = message.message
+        }
     }
     
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        holder.bind(messages[position])
+    override fun getItemViewType(position: Int): Int {
+        return if (messages[position].isSystemMessage) VIEW_TYPE_SYSTEM else VIEW_TYPE_MESSAGE
+    }
+    
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_SYSTEM) {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_system_message, parent, false)
+            SystemMessageViewHolder(view)
+        } else {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_group_message, parent, false)
+            MessageViewHolder(view)
+        }
+    }
+    
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is MessageViewHolder -> holder.bind(messages[position])
+            is SystemMessageViewHolder -> holder.bind(messages[position])
+        }
     }
     
     override fun getItemCount() = messages.size

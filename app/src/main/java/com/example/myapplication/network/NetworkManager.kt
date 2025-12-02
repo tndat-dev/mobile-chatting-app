@@ -57,6 +57,7 @@ class NetworkManager private constructor() {
         const val INVITE_TO_GROUP = 0x31
         const val ACCEPT_GROUP_INVITE = 0x3A
         const val DECLINE_GROUP_INVITE = 0x3B
+        const val MAKE_ADMIN = 0x3C
         const val REMOVE_FROM_GROUP = 0x32
         const val LEAVE_GROUP = 0x33
         const val GROUP_MESSAGE = 0x34
@@ -252,6 +253,11 @@ class NetworkManager private constructor() {
     fun removeFromGroup(groupId: Int, userId: Int): Boolean {
         val payload = "groupId=$groupId&userId=$userId"
         return sendMessage(MessageType.REMOVE_FROM_GROUP, payload)
+    }
+
+    fun makeAdmin(groupId: Int, userId: Int): Boolean {
+        val payload = "groupId=$groupId&userId=$userId"
+        return sendMessage(MessageType.MAKE_ADMIN, payload)
     }
     
     fun leaveGroup(groupId: Int): Boolean {

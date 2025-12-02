@@ -111,6 +111,10 @@ public:
                          const std::string& content, long long timestamp);
   std::vector<data::GroupMessage> get_group_messages(int group_id, int limit = 50);
   
+    // Admin helpers
+    bool set_group_admin(int group_id, int user_id, bool is_admin);
+    bool is_group_admin(int group_id, int user_id);
+  
   // ====================================================================
   // ACTIVITY LOG OPERATIONS
   // ====================================================================

@@ -656,6 +656,38 @@ bool PostgresPersistence::remove_group_member(int group_id, int user_id) {
   return true;
 }
 
+bool PostgresPersistence::set_group_admin(int group_id, int user_id, bool is_admin) {
+  // Ensure the column exists (migration-safe)
+  std::string alter = "ALTER TABLE group_members ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE";
+  PGresult* res = db->execute(alter);
+  if (!res) return false;
+  PQclear(res);
+
+  std::string query = "UPDATE group_members SET is_admin = " + std::string(is_admin ? "TRUE" : "FALSE")
+                     + " WHERE group_id = " + std::to_string(group_id) + " AND user_id = " + std::to_string(user_id);
+  res = db->execute(query);
+  if (!res) return false;
+  PQclear(res);
+  return true;
+}
+
+bool PostgresPersistence::is_group_admin(int group_id, int user_id) {
+  // If column missing, the ALTER will be executed in set_group_admin path; here just try select
+  std::string query = "SELECT is_admin FROM group_members WHERE group_id = " + std::to_string(group_id) + " AND user_id = " + std::to_string(user_id);
+  PGresult* res = db->execute(query);
+  if (!res) return false;
+  if (PQntuples(res) == 0) {
+    PQclear(res);
+    return false;
+  }
+  bool result = false;
+  if (!PQgetisnull(res, 0, 0)) {
+    result = (strcmp(PQgetvalue(res, 0, 0), "t") == 0);
+  }
+  PQclear(res);
+  return result;
+}
+
 std::vector<data::Group> PostgresPersistence::get_user_groups(int user_id) {
   std::vector<data::Group> groups;
   

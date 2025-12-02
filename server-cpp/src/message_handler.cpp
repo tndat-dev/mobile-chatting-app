@@ -653,6 +653,29 @@ void handle_client(int client_fd, sockaddr_in addr) {
         int gid = std::stoi(kv["groupId"]);
         int limit = kv.count("limit") ? std::stoi(kv["limit"]) : 50;
 
+        // Check membership before returning history
+        bool is_member = false;
+        if (g_pg_persistence) {
+          auto members = g_pg_persistence->get_group_members(gid);
+          for (auto& m : members) {
+            if (m.id == (int)current_user_id) {
+              is_member = true;
+              break;
+            }
+          }
+        } else {
+          std::lock_guard<std::mutex> lock(g_mutex);
+          auto it = g_groups.find(gid);
+          if (it != g_groups.end() && it->second.members.count((int)current_user_id)) {
+            is_member = true;
+          }
+        }
+        
+        if (!is_member) {
+          send_message(client_fd, proto::ERROR, "Not in group", current_user_id);
+          break;
+        }
+
         auto messages = g_pg_persistence ? g_pg_persistence->get_group_messages(gid, limit) : std::vector<data::GroupMessage>();
 
         std::vector<std::pair<std::string, std::string>> items;
@@ -691,6 +714,8 @@ void handle_client(int client_fd, sockaddr_in addr) {
           // retrieve members as CSV
           std::string membersCsv;
           std::string memberNicksCsv;
+          std::string memberNamesCsv;
+          std::string memberAdminsCsv;
           if (g_pg_persistence) {
             auto members = g_pg_persistence->get_group_members(g.id);
             auto nicknameMap = g_pg_persistence->get_group_member_nicknames(g.id);
@@ -704,12 +729,25 @@ void handle_client(int client_fd, sockaddr_in addr) {
               std::string encNick = nick.empty() ? std::string() : utils::base64_encode(nick);
               if (!memberNicksCsv.empty()) memberNicksCsv += ",";
               memberNicksCsv += encNick;
+              // append username for this member
+              if (!memberNamesCsv.empty()) memberNamesCsv += ",";
+              memberNamesCsv += members[j].username;
+              // append admin status (0 or 1) aligned with member order
+              if (!memberAdminsCsv.empty()) memberAdminsCsv += ",";
+              bool isAdmin = g_pg_persistence->is_group_admin(g.id, members[j].id);
+              memberAdminsCsv += isAdmin ? "1" : "0";
               if (j + 1 < members.size()) membersCsv += ",";
             }
           } else {
             size_t j = 0;
             for (auto& mm : g.members) {
               membersCsv += std::to_string(mm.first);
+              if (!memberNamesCsv.empty()) memberNamesCsv += ",";
+              // lookup username from g_users_by_id
+              std::string uname = "User " + std::to_string(mm.first);
+              auto uit = g_users_by_id.find(mm.first);
+              if (uit != g_users_by_id.end()) uname = uit->second.username;
+              memberNamesCsv += uname;
               if (j + 1 < g.members.size()) membersCsv += ",";
               ++j;
             }
@@ -721,6 +759,10 @@ void handle_client(int client_fd, sockaddr_in addr) {
           items.push_back({"members" + std::to_string(i), membersCsv});
           // include memberNicks aligned with members list (base64 encoded, comma separated)
           items.push_back({"memberNicks" + std::to_string(i), memberNicksCsv});
+          // include memberNames aligned with members list (comma separated)
+          items.push_back({"memberNames" + std::to_string(i), memberNamesCsv});
+          // include memberAdmins aligned with members list (0 or 1, comma separated)
+          items.push_back({"memberAdmins" + std::to_string(i), memberAdminsCsv});
         }
 
         send_message(client_fd, proto::SUCCESS, serialize_kv(items), current_user_id);
@@ -768,12 +810,16 @@ void handle_client(int client_fd, sockaddr_in addr) {
         if (g_pg_persistence) {
           // Create group in DB and add creator
           db_ok = g_pg_persistence->create_group(name, (int)current_user_id, gid);
-          // For invited memberIds: if they are friends, add them immediately (persisted members).
-          // Otherwise, create invites for them to accept.
-          for (int memberId : memberIds) {
-            // Always add members directly (server-authoritative auto-join on create)
-            if (!g_pg_persistence->add_group_member(gid, memberId)) {
-              std::cerr << "[PERSISTENCE] Failed to add group member for gid=" << gid << " uid=" << memberId << std::endl;
+          if (db_ok) {
+            // Make the creator an admin in the DB
+            if (!g_pg_persistence->set_group_admin(gid, (int)current_user_id, true)) {
+              std::cerr << "[PERSISTENCE] Failed to set creator as admin gid=" << gid << " uid=" << current_user_id << std::endl;
+            }
+            // For invited memberIds: add them immediately (persisted members).
+            for (int memberId : memberIds) {
+              if (!g_pg_persistence->add_group_member(gid, memberId)) {
+                std::cerr << "[PERSISTENCE] Failed to add group member for gid=" << gid << " uid=" << memberId << std::endl;
+              }
             }
           }
         } else {
@@ -782,7 +828,8 @@ void handle_client(int client_fd, sockaddr_in addr) {
           data::Group g{gid, name, (int)current_user_id, {}};
           // Add creator
           g.members[(int)current_user_id] = true;
-          // For in-memory-only mode, add invited members immediately (no persistence)
+          g.admins[(int)current_user_id] = true;
+          // For in-memory-only mode, add invited members immediately
           for (int memberId : memberIds) {
             g.members[memberId] = true;
           }
@@ -798,6 +845,7 @@ void handle_client(int client_fd, sockaddr_in addr) {
           data::Group g{gid, name, (int)current_user_id, {}};
           // Add creator
           g.members[(int)current_user_id] = true;
+          g.admins[(int)current_user_id] = true;
           // If we persisted invited members as actual members (friends), mark them in-memory as well
           if (g_pg_persistence) {
             for (int memberId : memberIds) {
@@ -835,6 +883,38 @@ void handle_client(int client_fd, sockaddr_in addr) {
           {"members", membersStr}
         });
         send_message(client_fd, proto::SUCCESS, resp, current_user_id);
+        // Broadcast a system message to the group announcing creation
+        try {
+          long long ts_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+              std::chrono::system_clock::now().time_since_epoch()).count();
+          std::string actor = "";
+          {
+            std::lock_guard<std::mutex> lock(g_mutex);
+            actor = g_users_by_id.count((int)current_user_id) ? g_users_by_id[(int)current_user_id].username : ("User" + std::to_string(current_user_id));
+          }
+          std::string sys = actor + " created the group";
+          if (g_pg_persistence) g_pg_persistence->save_group_message(gid, 0, sys, ts_ms);
+          // Broadcast to members
+          std::vector<int> membersToNotify;
+          if (g_pg_persistence) {
+            auto db_members = g_pg_persistence->get_group_members(gid);
+            for (auto &mu : db_members) membersToNotify.push_back(mu.id);
+          } else {
+            std::lock_guard<std::mutex> lock(g_mutex);
+            for (auto &m : g_groups[gid].members) membersToNotify.push_back(m.first);
+          }
+          auto out = serialize_kv({{"groupId", std::to_string(gid)}, {"senderId", "0"}, {"message", sys}, {"timestamp", std::to_string(ts_ms)}});
+          for (int uid : membersToNotify) {
+            int fd = -1;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              auto it = g_online_clients.find(uid);
+              if (it != g_online_clients.end()) fd = it->second;
+            }
+            if (fd != -1) send_message(fd, proto::GROUP_MESSAGE, out, 0);
+            else enqueue_offline(uid, proto::GROUP_MESSAGE, out, 0);
+          }
+        } catch (...) {}
         break;
       }
       
@@ -888,6 +968,40 @@ void handle_client(int client_fd, sockaddr_in addr) {
             });
             send_message(fd, proto::INVITE_TO_GROUP, notif, current_user_id);
           }
+          // Broadcast system message announcing addition
+          try {
+            long long ts_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count();
+            std::string actor;
+            std::string target;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              actor = g_users_by_id.count((int)current_user_id) ? g_users_by_id[(int)current_user_id].username : ("User" + std::to_string(current_user_id));
+              target = g_users_by_id.count(uid) ? g_users_by_id[uid].username : ("User" + std::to_string(uid));
+            }
+            std::string sys = actor + " added " + target + " to the group";
+            if (g_pg_persistence) g_pg_persistence->save_group_message(gid, 0, sys, ts_ms);
+            std::vector<int> membersToNotify;
+            if (g_pg_persistence) {
+              auto db_members = g_pg_persistence->get_group_members(gid);
+              for (auto &mu : db_members) membersToNotify.push_back(mu.id);
+            } else {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              for (auto &m : g_groups[gid].members) membersToNotify.push_back(m.first);
+            }
+            auto out = serialize_kv({{"groupId", std::to_string(gid)}, {"senderId", "0"}, {"message", sys}, {"timestamp", std::to_string(ts_ms)}});
+            for (int mid : membersToNotify) {
+              int fd = -1;
+              {
+                std::lock_guard<std::mutex> lock(g_mutex);
+                auto it = g_online_clients.find(mid);
+                if (it != g_online_clients.end()) fd = it->second;
+              }
+              if (fd != -1) send_message(fd, proto::GROUP_MESSAGE, out, 0);
+              else enqueue_offline(mid, proto::GROUP_MESSAGE, out, 0);
+            }
+          } catch (...) {}
+
           send_message(client_fd, proto::SUCCESS, "Added", current_user_id);
         } else {
           send_message(client_fd, proto::ERROR, "Invite failed", current_user_id);
@@ -989,20 +1103,55 @@ void handle_client(int client_fd, sockaddr_in addr) {
               std::cerr << "[PERSISTENCE] Failed to rename group in DB gid=" << gid << std::endl;
             }
           }
-          // Notify members about rename (best effort)
-          std::lock_guard<std::mutex> lock(g_mutex);
-          auto it = g_groups.find(gid);
-          if (it != g_groups.end()) {
-            for (auto &m : it->second.members) {
-              int uid = m.first;
-              if (uid == (int)current_user_id) continue;
-              auto it2 = g_online_clients.find(uid);
-              if (it2 != g_online_clients.end()) {
-                auto notif = serialize_kv({{"groupId", std::to_string(gid)}, {"name", newName}});
-                send_message(it2->second, proto::SUCCESS, notif, current_user_id);
-              }
+          
+          // Broadcast system message announcing rename
+          try {
+            long long ts_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count();
+            std::string actor;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              actor = g_users_by_id.count((int)current_user_id) ? g_users_by_id[(int)current_user_id].username : ("User" + std::to_string(current_user_id));
             }
-          }
+            std::string sys = actor + " renamed the group to \"" + newName + "\"";
+            if (g_pg_persistence) g_pg_persistence->save_group_message(gid, 0, sys, ts_ms);
+            
+            std::vector<int> membersToNotify;
+            if (g_pg_persistence) {
+              auto db_members = g_pg_persistence->get_group_members(gid);
+              for (auto &mu : db_members) membersToNotify.push_back(mu.id);
+            } else {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              for (auto &m : g_groups[gid].members) membersToNotify.push_back(m.first);
+            }
+            
+            // Send system message to all members
+            auto sys_out = serialize_kv({{"groupId", std::to_string(gid)}, {"senderId", "0"}, {"message", sys}, {"timestamp", std::to_string(ts_ms)}});
+            for (int mid : membersToNotify) {
+              int fd = -1;
+              {
+                std::lock_guard<std::mutex> lock(g_mutex);
+                auto it = g_online_clients.find(mid);
+                if (it != g_online_clients.end()) fd = it->second;
+              }
+              if (fd != -1) send_message(fd, proto::GROUP_MESSAGE, sys_out, 0);
+              else enqueue_offline(mid, proto::GROUP_MESSAGE, sys_out, 0);
+            }
+            
+            // Send explicit rename notification to all members so they update local Group name
+            auto rename_notif = serialize_kv({{"groupId", std::to_string(gid)}, {"name", newName}, {"action", "renamed"}});
+            for (int mid : membersToNotify) {
+              int fd = -1;
+              {
+                std::lock_guard<std::mutex> lock(g_mutex);
+                auto it = g_online_clients.find(mid);
+                if (it != g_online_clients.end()) fd = it->second;
+              }
+              if (fd != -1) send_message(fd, proto::SUCCESS, rename_notif, current_user_id);
+              else enqueue_offline(mid, proto::SUCCESS, rename_notif, current_user_id);
+            }
+          } catch (...) {}
+          
           send_message(client_fd, proto::SUCCESS, "Renamed", current_user_id);
         } else {
           send_message(client_fd, proto::ERROR, "Rename failed", current_user_id);
@@ -1033,6 +1182,67 @@ void handle_client(int client_fd, sockaddr_in addr) {
         }
 
         if (ok) {
+          // Broadcast system message about nickname change
+          try {
+            long long ts_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count();
+            std::string actor;
+            std::string target;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              auto uit = g_users_by_id.find((int)current_user_id);
+              actor = (uit != g_users_by_id.end() ? uit->second.username : ("User " + std::to_string((int)current_user_id)));
+              auto tit = g_users_by_id.find(uid);
+              target = (tit != g_users_by_id.end() ? tit->second.username : ("User " + std::to_string(uid)));
+            }
+            std::string sys;
+            if (uid == (int)current_user_id) {
+              // User set their own nickname
+              if (nick.empty()) {
+                sys = actor + " removed their nickname";
+              } else {
+                sys = actor + " set their nickname to \"" + nick + "\"";
+              }
+            } else {
+              // Someone set nickname for another user (admin capability)
+              if (nick.empty()) {
+                sys = actor + " removed " + target + "'s nickname";
+              } else {
+                sys = actor + " set " + target + "'s nickname to \"" + nick + "\"";
+              }
+            }
+            
+            // Persist system message to DB
+            if (g_pg_persistence) {
+              if (!g_pg_persistence->save_group_message(gid, 0, sys, ts_ms)) {
+                std::cerr << "[PERSISTENCE] Failed to persist system message for SET_GROUP_NICKNAME" << std::endl;
+              }
+            }
+            
+            // Broadcast to all group members
+            std::vector<int> membersToNotify;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              auto git = g_groups.find(gid);
+              if (git != g_groups.end()) {
+                for (auto& [mid, _] : git->second.members) {
+                  membersToNotify.push_back(mid);
+                }
+              }
+            }
+            auto out = serialize_kv({{"groupId", std::to_string(gid)}, {"senderId", "0"}, {"message", sys}, {"timestamp", std::to_string(ts_ms)}});
+            for (int mid : membersToNotify) {
+              int fd = -1;
+              {
+                std::lock_guard<std::mutex> lock(g_mutex);
+                auto it = g_online_clients.find(mid);
+                if (it != g_online_clients.end()) fd = it->second;
+              }
+              if (fd != -1) send_message(fd, proto::GROUP_MESSAGE, out, 0);
+              else enqueue_offline(mid, proto::GROUP_MESSAGE, out, 0);
+            }
+          } catch (...) {}
+          
           send_message(client_fd, proto::SUCCESS, "Nickname set", current_user_id);
         } else {
           send_message(client_fd, proto::ERROR, "Set nickname failed", current_user_id);
@@ -1044,28 +1254,214 @@ void handle_client(int client_fd, sockaddr_in addr) {
         auto kv = parse_kv(payload);
         int gid = std::stoi(kv["groupId"]);
         int uid = std::stoi(kv["userId"]);
-        bool ok = false;
-        
-        {
+        bool permitted = false;
+        // Check permission: user may remove themselves; removing others requires admin
+        if (g_pg_persistence) {
+          if (uid == (int)current_user_id) {
+            permitted = true;
+          } else {
+            permitted = g_pg_persistence->is_group_admin(gid, (int)current_user_id);
+          }
+        } else {
           std::lock_guard<std::mutex> lock(g_mutex);
           auto it = g_groups.find(gid);
-          if (it != g_groups.end() && it->second.members.count((int)current_user_id)) {
-            it->second.members.erase(uid);
-            ok = true;
+          if (it != g_groups.end()) {
+            if (uid == (int)current_user_id) permitted = true;
+            else permitted = (it->second.admins.count((int)current_user_id) && it->second.admins[(int)current_user_id]);
           }
         }
-        // Persist removal to DB when using Postgres persistence
-        if (ok && g_pg_persistence) {
+
+        if (!permitted) {
+          send_message(client_fd, proto::ERROR, "Not permitted", current_user_id);
+          break;
+        }
+
+        // Proceed to remove: persist first if using DB
+        if (g_pg_persistence) {
           if (!g_pg_persistence->remove_group_member(gid, uid)) {
             std::cerr << "[PERSISTENCE] Failed to remove group member gid=" << gid << " uid=" << uid << std::endl;
-            // If DB removal failed, treat as failure for client
             send_message(client_fd, proto::ERROR, "Remove failed (db)", current_user_id);
             break;
           }
         }
 
-        send_message(client_fd, ok ? proto::SUCCESS : proto::ERROR, 
-                    ok ? "Removed" : "Remove failed", current_user_id);
+        // Update in-memory state
+        {
+          std::lock_guard<std::mutex> lock(g_mutex);
+          auto it = g_groups.find(gid);
+          if (it != g_groups.end()) {
+            it->second.members.erase(uid);
+            it->second.admins.erase(uid);
+          }
+        }
+
+          // Broadcast system message announcing removal
+          try {
+            long long ts_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count();
+            std::string actor;
+            std::string target;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              actor = g_users_by_id.count((int)current_user_id) ? g_users_by_id[(int)current_user_id].username : ("User" + std::to_string(current_user_id));
+              target = g_users_by_id.count(uid) ? g_users_by_id[uid].username : ("User" + std::to_string(uid));
+            }
+            std::string sys = actor + " removed " + target + " from the group";
+            if (g_pg_persistence) g_pg_persistence->save_group_message(gid, 0, sys, ts_ms);
+            std::vector<int> membersToNotify;
+            if (g_pg_persistence) {
+              auto db_members = g_pg_persistence->get_group_members(gid);
+              for (auto &mu : db_members) membersToNotify.push_back(mu.id);
+            } else {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              for (auto &m : g_groups[gid].members) membersToNotify.push_back(m.first);
+            }
+            auto out = serialize_kv({{"groupId", std::to_string(gid)}, {"senderId", "0"}, {"message", sys}, {"timestamp", std::to_string(ts_ms)}});
+            for (int mid : membersToNotify) {
+              int fd = -1;
+              {
+                std::lock_guard<std::mutex> lock(g_mutex);
+                auto it = g_online_clients.find(mid);
+                if (it != g_online_clients.end()) fd = it->second;
+              }
+              if (fd != -1) send_message(fd, proto::GROUP_MESSAGE, out, 0);
+              else enqueue_offline(mid, proto::GROUP_MESSAGE, out, 0);
+            }
+          } catch (...) {}
+
+          // Send explicit removal notification to the removed user so client can delete local data
+          try {
+            int removed_fd = -1;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              auto it = g_online_clients.find(uid);
+              if (it != g_online_clients.end()) removed_fd = it->second;
+            }
+            auto removed_out = serialize_kv({{"groupId", std::to_string(gid)}, {"action", "removed"}});
+            if (removed_fd != -1) {
+              send_message(removed_fd, proto::GROUP_MESSAGE, removed_out, 0);
+            } else {
+              // if offline, enqueue as offline message so client receives on next reconnect
+              enqueue_offline(uid, proto::GROUP_MESSAGE, removed_out, 0);
+            }
+          } catch (...) {}
+
+          // Notify remaining members to remove this user from their local members list
+          try {
+            std::vector<int> remainingMembers;
+            if (g_pg_persistence) {
+              auto db_members = g_pg_persistence->get_group_members(gid);
+              for (auto &mu : db_members) remainingMembers.push_back(mu.id);
+            } else {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              auto git = g_groups.find(gid);
+              if (git != g_groups.end()) {
+                for (auto &m : git->second.members) remainingMembers.push_back(m.first);
+              }
+            }
+            auto member_removal_out = serialize_kv({{"groupId", std::to_string(gid)}, {"userId", std::to_string(uid)}, {"action", "memberRemoved"}});
+            for (int mid : remainingMembers) {
+              int fd = -1;
+              {
+                std::lock_guard<std::mutex> lock(g_mutex);
+                auto it = g_online_clients.find(mid);
+                if (it != g_online_clients.end()) fd = it->second;
+              }
+              if (fd != -1) send_message(fd, proto::SUCCESS, member_removal_out, 0);
+              else enqueue_offline(mid, proto::SUCCESS, member_removal_out, 0);
+            }
+          } catch (...) {}
+
+          send_message(client_fd, proto::SUCCESS, "Removed", current_user_id);
+        break;
+      }
+
+      case proto::MAKE_ADMIN: {
+        auto kv = parse_kv(payload);
+        int gid = std::stoi(kv["groupId"]);
+        int uid = std::stoi(kv["userId"]);
+
+        bool permitted = false;
+        if (g_pg_persistence) {
+          permitted = g_pg_persistence->is_group_admin(gid, (int)current_user_id);
+        } else {
+          std::lock_guard<std::mutex> lock(g_mutex);
+          auto it = g_groups.find(gid);
+          if (it != g_groups.end()) {
+            permitted = (it->second.admins.count((int)current_user_id) && it->second.admins[(int)current_user_id]);
+          }
+        }
+
+        if (!permitted) {
+          send_message(client_fd, proto::ERROR, "Not permitted", current_user_id);
+          break;
+        }
+
+        if (g_pg_persistence) {
+          if (!g_pg_persistence->set_group_admin(gid, uid, true)) {
+            std::cerr << "[PERSISTENCE] Failed to set admin gid=" << gid << " uid=" << uid << std::endl;
+            send_message(client_fd, proto::ERROR, "Make admin failed (db)", current_user_id);
+            break;
+          }
+        }
+
+        {
+          std::lock_guard<std::mutex> lock(g_mutex);
+          auto it = g_groups.find(gid);
+          if (it != g_groups.end()) it->second.admins[uid] = true;
+        }
+
+        // Broadcast system message announcing admin promotion
+        try {
+          long long ts_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+              std::chrono::system_clock::now().time_since_epoch()).count();
+          std::string actor;
+          std::string target;
+          {
+            std::lock_guard<std::mutex> lock(g_mutex);
+            actor = g_users_by_id.count((int)current_user_id) ? g_users_by_id[(int)current_user_id].username : ("User" + std::to_string(current_user_id));
+            target = g_users_by_id.count(uid) ? g_users_by_id[uid].username : ("User" + std::to_string(uid));
+          }
+          std::string sys = actor + " made " + target + " an admin";
+          if (g_pg_persistence) g_pg_persistence->save_group_message(gid, 0, sys, ts_ms);
+          
+          std::vector<int> membersToNotify;
+          if (g_pg_persistence) {
+            auto db_members = g_pg_persistence->get_group_members(gid);
+            for (auto &mu : db_members) membersToNotify.push_back(mu.id);
+          } else {
+            std::lock_guard<std::mutex> lock(g_mutex);
+            for (auto &m : g_groups[gid].members) membersToNotify.push_back(m.first);
+          }
+          
+          // Send system message to all members
+          auto sys_out = serialize_kv({{"groupId", std::to_string(gid)}, {"senderId", "0"}, {"message", sys}, {"timestamp", std::to_string(ts_ms)}});
+          for (int mid : membersToNotify) {
+            int fd = -1;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              auto it = g_online_clients.find(mid);
+              if (it != g_online_clients.end()) fd = it->second;
+            }
+            if (fd != -1) send_message(fd, proto::GROUP_MESSAGE, sys_out, 0);
+            else enqueue_offline(mid, proto::GROUP_MESSAGE, sys_out, 0);
+          }
+          
+          // Also send explicit admin notification to all members so they update local isAdmin flag
+          auto admin_notif = serialize_kv({{"groupId", std::to_string(gid)}, {"userId", std::to_string(uid)}, {"isAdmin", "true"}});
+          for (int mid : membersToNotify) {
+            int fd = -1;
+            {
+              std::lock_guard<std::mutex> lock(g_mutex);
+              auto it = g_online_clients.find(mid);
+              if (it != g_online_clients.end()) fd = it->second;
+            }
+            if (fd != -1) send_message(fd, proto::SUCCESS, admin_notif, current_user_id);
+            else enqueue_offline(mid, proto::SUCCESS, admin_notif, current_user_id);
+          }
+        } catch (...) {}
+
+        send_message(client_fd, proto::SUCCESS, "Made admin", current_user_id);
         break;
       }
       

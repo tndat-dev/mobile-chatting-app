@@ -22,6 +22,8 @@ struct Group {
   std::string name;
   int ownerId;
   std::unordered_map<int, bool> members;
+  // Admins map: true if the user is an admin for this group
+  std::unordered_map<int, bool> admins;
   // Optional per-member nickname map (runtime only)
   std::unordered_map<int, std::string> member_nicknames;
 };

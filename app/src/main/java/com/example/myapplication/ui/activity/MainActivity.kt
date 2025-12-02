@@ -244,13 +244,109 @@ class MainActivity : AppCompatActivity(), NetworkManager.MessageCallback {
                             Toast.makeText(this, "You have $pc friend request(s)", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }
+                    }
+                    // Detect admin promotion notification: SUCCESS with groupId, userId, isAdmin=true
+                    try {
+                        val pairsAdmin = payload.split("&").mapNotNull {
+                            val parts = it.split("=", limit = 2)
+                            if (parts.size == 2) parts[0] to parts[1] else null
+                        }.toMap()
+                        if (pairsAdmin.containsKey("groupId") && pairsAdmin.containsKey("userId") && pairsAdmin["isAdmin"] == "true") {
+                            val gid = pairsAdmin["groupId"]?.toIntOrNull() ?: -1
+                            val uid = pairsAdmin["userId"]?.toIntOrNull() ?: -1
+                            if (gid > 0 && uid > 0) {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    try {
+                                        val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this@MainActivity)
+                                        val existing = db.groupMemberDao().getMember(gid, uid)
+                                        if (existing != null) {
+                                            db.groupMemberDao().insertMember(existing.copy(isAdmin = true))
+                                        } else {
+                                            // If member not present locally, insert a placeholder with isAdmin=true
+                                            val uname = db.userDao().getUser(uid)?.username ?: "User $uid"
+                                            val newMember = com.example.myapplication.data.model.GroupMember(
+                                                groupId = gid,
+                                                userId = uid,
+                                                username = uname,
+                                                nickname = null,
+                                                isAdmin = true,
+                                                joinedAt = System.currentTimeMillis()
+                                            )
+                                            db.groupMemberDao().insertMember(newMember)
+                                        }
+                                    } catch (e: Exception) {
+                                        // ignore
+                                    }
+                                }
+                            }
+                        }
+                        // Detect member removal notification: SUCCESS with groupId, userId, action=memberRemoved
+                        if (pairsAdmin.containsKey("groupId") && pairsAdmin.containsKey("userId") && pairsAdmin["action"] == "memberRemoved") {
+                            val gid = pairsAdmin["groupId"]?.toIntOrNull() ?: -1
+                            val uid = pairsAdmin["userId"]?.toIntOrNull() ?: -1
+                            if (gid > 0 && uid > 0) {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    try {
+                                        val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this@MainActivity)
+                                        db.groupMemberDao().removeMember(gid, uid)
+                                    } catch (e: Exception) {
+                                        // ignore
+                                    }
+                                }
+                            }
+                        }
+                        // Detect rename group notification: SUCCESS with groupId, name, action=renamed
+                        if (pairsAdmin.containsKey("groupId") && pairsAdmin.containsKey("name") && pairsAdmin["action"] == "renamed") {
+                            val gid = pairsAdmin["groupId"]?.toIntOrNull() ?: -1
+                            val newName = pairsAdmin["name"] ?: ""
+                            if (gid > 0 && newName.isNotEmpty()) {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    try {
+                                        val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this@MainActivity)
+                                        val existing = db.groupDao().getGroup(gid)
+                                        if (existing != null) {
+                                            db.groupDao().insertGroup(existing.copy(name = newName))
+                                        }
+                                    } catch (e: Exception) {
+                                        // ignore
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        // ignore
+                    }
             }
             NetworkManager.MessageType.DIRECT_MESSAGE -> {
                 // Message will be handled by ChatViewModel/Repository
             }
             NetworkManager.MessageType.GROUP_MESSAGE -> {
                 // Group message will be handled by ChatViewModel/Repository
+                try {
+                    val pairs = payload.split("&").mapNotNull {
+                        val parts = it.split("=", limit = 2)
+                        if (parts.size == 2) parts[0] to parts[1] else null
+                    }.toMap()
+                    val action = pairs["action"]
+                    val gid = pairs["groupId"]?.toIntOrNull()
+                    if (action == "removed" && gid != null) {
+                        // Remove local GroupMember entry for this user
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            try {
+                                val db = com.example.myapplication.data.database.ChatDatabase.getDatabase(this@MainActivity)
+                                db.groupMemberDao().removeMember(gid, sessionManager.getUserId())
+                            } catch (e: Exception) {
+                                // ignore
+                            }
+                        }
+
+                        runOnUiThread {
+                            Toast.makeText(this, "You were removed from the group", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    // ignore parse errors
+                }
             }
             NetworkManager.MessageType.USER_ONLINE,
             NetworkManager.MessageType.USER_OFFLINE -> {
@@ -418,6 +514,12 @@ class MainActivity : AppCompatActivity(), NetworkManager.MessageCallback {
                     val memberNicksKey = "memberNicks${i}"
                     val memberNicksCsv = pairs[memberNicksKey] ?: ""
                     val memberNicks = if (memberNicksCsv.isNotEmpty()) memberNicksCsv.split(',') else emptyList()
+                    // parse member usernames if provided (comma separated, aligned with memberIds)
+                    val memberNamesCsv = pairs["memberNames$i"] ?: ""
+                    val memberNames = if (memberNamesCsv.isNotEmpty()) memberNamesCsv.split(',') else emptyList()
+                    // parse member admin status if provided (0 or 1, comma separated, aligned with memberIds)
+                    val memberAdminsCsv = pairs["memberAdmins$i"] ?: ""
+                    val memberAdmins = if (memberAdminsCsv.isNotEmpty()) memberAdminsCsv.split(',') else emptyList()
 
                     val group = com.example.myapplication.data.model.Group(
                         id = gid,
@@ -433,11 +535,16 @@ class MainActivity : AppCompatActivity(), NetworkManager.MessageCallback {
 
                     // Insert members (do not mutate the server-provided member list). Ensure local user record exists separately.
                     for ((idx, uid) in memberIds.withIndex()) {
-                        val uname = try {
-                            val friend = db.friendDao().getFriend(uid)
-                            friend?.username ?: db.userDao().getUser(uid)?.username ?: "User $uid"
-                        } catch (e: Exception) {
-                            "User $uid"
+                        // Prefer server-provided username, fall back to local cache
+                        val uname = if (idx < memberNames.size && memberNames[idx].isNotEmpty()) {
+                            memberNames[idx]
+                        } else {
+                            try {
+                                val friend = db.friendDao().getFriend(uid)
+                                friend?.username ?: db.userDao().getUser(uid)?.username ?: "User $uid"
+                            } catch (e: Exception) {
+                                "User $uid"
+                            }
                         }
                         val nick = try {
                             if (idx < memberNicks.size && memberNicks[idx].isNotEmpty()) {
@@ -446,15 +553,22 @@ class MainActivity : AppCompatActivity(), NetworkManager.MessageCallback {
                         } catch (e: Exception) {
                             null
                         }
+                        // Determine admin status from server-provided data or fall back to checking if creator
+                        val isAdmin = if (idx < memberAdmins.size && memberAdmins[idx].isNotEmpty()) {
+                            memberAdmins[idx] == "1"
+                        } else {
+                            (uid == sessionManager.getUserId())
+                        }
                         val member = com.example.myapplication.data.model.GroupMember(
                             groupId = gid,
                             userId = uid,
                             username = uname,
                             nickname = nick,
-                            isAdmin = (uid == sessionManager.getUserId()),
+                            isAdmin = isAdmin,
                             joinedAt = System.currentTimeMillis()
                         )
                         try {
+                            // Insert/replace with server data (server is authoritative for admin status)
                             db.groupMemberDao().insertMember(member)
                         } catch (e: Exception) {
                             // ignore
