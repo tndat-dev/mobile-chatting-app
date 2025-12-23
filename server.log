@@ -1,0 +1,8 @@
+[PERSISTENCE] Connected to PostgreSQL successfully
+[C++ SERVER] Connected to PostgreSQL successfully
+[C++ SERVER] Loaded user: alice (id=2, 1 friends)
+[C++ SERVER] Loaded user: dat (id=1, 3 friends)
+[C++ SERVER] Loaded user: dat2 (id=10, 1 friends)
+[C++ SERVER] Loaded user: quang (id=9, 1 friends)
+[C++ SERVER] Loaded 4 users from database
+[C++ SERVER] Listening on 0.0.0.0:8080
