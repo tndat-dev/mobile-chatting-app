@@ -1,577 +1,260 @@
-# Mobile Chatting App - Kubernetes Deployment
+# Mobile Chatting App
 
-Hybrid mobile chat application with microservices architecture deployed on Kubernetes.
+A hybrid mobile chatting application built with Android (Kotlin) and a C++ backend server, featuring real-time messaging capabilities and PostgreSQL database integration.
 
 ## 📋 Table of Contents
 
-- [Architecture](#architecture)
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
 - [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Deployment](#deployment)
+- [Installation](#installation)
 - [Configuration](#configuration)
-- [Monitoring](#monitoring)
+- [Running the Application](#running-the-application)
+- [Database Setup](#database-setup)
 - [Development](#development)
-- [Troubleshooting](#troubleshooting)
-- [CKA Practice Topics](#cka-practice-topics)
+- [License](#license)
 
-## 🏗️ Architecture
+## 🔍 Overview
+
+This is a real-time mobile chatting application that combines an Android frontend with a high-performance C++ backend server. The application provides instant messaging capabilities with a focus on performance and scalability.
+
+## ✨ Features
+
+- Real-time messaging
+- User authentication and login system
+- PostgreSQL database integration
+- Custom C++ chat server
+- Android native UI with Kotlin
+- Efficient message handling
+- Server management scripts
+
+## 🛠 Tech Stack
+
+### Frontend
+- **Language**: Kotlin (21.3%)
+- **Platform**: Android
+- **Build Tool**: Gradle
+
+### Backend
+- **Language**: C++ (25.6%)
+- **Database**: PostgreSQL
+- **Build Tool**: CMake
+
+### Additional
+- HTML (23.0%)
+- Makefile (12.0%)
+- C (10.9%)
+- CMake (6.4%)
+
+## 📁 Project Structure
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   Ingress Controller                 │
-│              (chat.yourdomain.com)                   │
-└──────────────────────┬──────────────────────────────┘
-                       │
-        ┌──────────────┴──────────────┐
-        │    Chat Server Service       │
-        │      (LoadBalancer)          │
-        └──────────────┬──────────────┘
-                       │
-        ┌──────────────┴──────────────┐
-        │   Chat Server Pods (3x)     │
-        │   - C++ Application         │
-        │   - HPA enabled             │
-        │   - Resource limits         │
-        └──────────────┬──────────────┘
-                       │
-        ┌──────────────┴──────────────┐
-        │   PostgreSQL Service        │
-        │   - StatefulSet             │
-        │   - Persistent Volume       │
-        └─────────────────────────────┘
+mobile-chatting-app/
+├── app/                      # Android application source code
+├── server-cpp/               # C++ chat server implementation
+├── database/                 # Database migrations and setup
+│   └── migrations/
+├── scripts/                  # Utility scripts for automation
+├── gradle/                   # Gradle wrapper files
+├── build.gradle.kts          # Gradle build configuration
+├── settings.gradle.kts       # Gradle settings
+├── local.properties          # Local SDK configuration
+└── README.md
 ```
 
-### Components
+## 📦 Prerequisites
 
-- **Android App**: Kotlin-based mobile client
-- **Chat Server**: C++ backend with socket programming
-- **Database**: PostgreSQL 15 with persistent storage
-- **Ingress**: NGINX ingress controller
-- **Monitoring**: Prometheus + Grafana (optional)
+Before you begin, ensure you have the following installed:
 
-## 🔧 Prerequisites
+- **Android Studio** (latest version)
+- **Android SDK**
+- **JDK 11** or higher
+- **CMake** (for C++ compilation)
+- **PostgreSQL** (version 12 or higher)
+- **g++** or **clang** (C++ compiler)
+- **Make**
 
-### Required Software
+## 🚀 Installation
 
-- **Kubernetes Cluster** (v1.24+)
-  - Minikube (for local development)
-  - or Production cluster (GKE, EKS, AKS, etc.)
-- **kubectl** (v1.24+)
-- **Docker** (v20.10+)
-- **Docker Registry** (Docker Hub, GCR, ECR, etc.)
-
-### Optional Tools
-
-- **Helm** (v3.0+) - for installing nginx-ingress
-- **k9s** - Kubernetes CLI dashboard
-- **kubectx/kubens** - context and namespace switching
-
-### Installation Commands
-
-```bash
-# Install kubectl
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-
-# Install Minikube (for local testing)
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
-
-# Start Minikube with sufficient resources
-minikube start --cpus=4 --memory=8192 --driver=docker
-
-# Enable ingress addon
-minikube addons enable ingress
-
-# Install Helm (optional)
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-```
-
-## 🚀 Quick Start
-
-### 1. Clone Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/tndat-dev/mobile-chatting-app.git
 cd mobile-chatting-app
 ```
 
-### 2. Configure Docker Registry
+### 2. Configure Android SDK Path
 
-Update the `Makefile` with your Docker registry:
+Edit `local.properties` and set your Android SDK path:
 
-```bash
-# Edit Makefile
-vim Makefile
-
-# Change this line:
-DOCKER_REGISTRY ?= your-registry
-
-# To your actual registry, e.g.:
-DOCKER_REGISTRY ?= docker.io/yourusername
+```properties
+sdk.dir=/path/to/your/Android/Sdk
 ```
 
-### 3. Update Secrets (Important!)
-
-Generate secure credentials for production:
-
-```bash
-# Generate base64 encoded password
-echo -n 'your-secure-password' | base64
-
-# Edit secrets file
-vim kubernetes/secrets.yaml
-
-# Replace default passwords with secure ones
+For example:
+```properties
+sdk.dir=/home/tndat/Android/Sdk
 ```
 
-### 4. Deploy Everything
+### 3. Build the C++ Server
 
 ```bash
-# Build, push, and deploy all components
-make deploy-all
-
-# Or step by step:
-make build-server        # Build Docker image
-make push-server         # Push to registry
-make deploy-postgres     # Deploy database
-make init-database       # Initialize schema
-make deploy-chatserver   # Deploy application
-make deploy-ingress      # Deploy ingress
-```
-
-### 5. Check Status
-
-```bash
-# View all resources
-make status
-
-# Watch pods coming up
-kubectl get pods -n chat-app -w
-
-# Check services
-kubectl get svc -n chat-app
-```
-
-## 📦 Deployment
-
-### Step-by-Step Deployment
-
-#### 1. Create Namespace
-
-```bash
-kubectl apply -f kubernetes/namespace.yaml
-```
-
-#### 2. Deploy Secrets and ConfigMaps
-
-```bash
-kubectl apply -f kubernetes/secrets.yaml
-kubectl apply -f kubernetes/configmap.yaml
-```
-
-#### 3. Deploy PostgreSQL
-
-```bash
-# Create persistent storage
-kubectl apply -f kubernetes/postgres-pv.yaml
-
-# Deploy PostgreSQL
-kubectl apply -f kubernetes/postgres-deployment.yaml
-
-# Wait for ready
-kubectl wait --for=condition=ready pod -l app=postgres -n chat-app --timeout=300s
-```
-
-#### 4. Initialize Database
-
-```bash
-# Run migration job
-kubectl apply -f kubernetes/db-init-job.yaml
-
-# Check job status
-kubectl get jobs -n chat-app
-kubectl logs job/db-migration -n chat-app
-```
-
-#### 5. Build and Deploy Chat Server
-
-```bash
-# Build image
-docker build -t your-registry/chat-server:latest ./server-cpp
-
-# Push to registry
-docker push your-registry/chat-server:latest
-
-# Update deployment with your image
-vim kubernetes/chatserver-deployment.yaml
-# Change: image: your-registry/chat-server:latest
-
-# Deploy
-kubectl apply -f kubernetes/chatserver-deployment.yaml
-
-# Wait for ready
-kubectl wait --for=condition=ready pod -l app=chat-server -n chat-app --timeout=300s
-```
-
-#### 6. Deploy Network Policies (Optional)
-
-```bash
-kubectl apply -f kubernetes/network-policy.yaml
-```
-
-#### 7. Deploy Ingress
-
-```bash
-# Update domain in ingress.yaml
-vim kubernetes/ingress.yaml
-
-# Deploy
-kubectl apply -f kubernetes/ingress.yaml
+cd server-cpp
+rm -rf build
+mkdir build
+cd build
+cmake ..
+make
 ```
 
 ## ⚙️ Configuration
 
-### Environment Variables
+### Database Configuration
 
-ConfigMap (`kubernetes/configmap.yaml`):
-- `DB_HOST`: PostgreSQL service hostname
-- `DB_PORT`: PostgreSQL port (5432)
-- `DB_NAME`: Database name
-- `SERVER_PORT`: Chat server port (8080)
-- `MAX_CONNECTIONS`: Maximum concurrent connections
-- `LOG_LEVEL`: Application log level
+The application uses PostgreSQL as its database. Configure your database connection with the following credentials:
 
-Secrets (`kubernetes/secrets.yaml`):
-- `postgres_user`: Database username
-- `postgres_password`: Database password
-- `jwt_secret`: JWT signing key
+- **Host**: localhost
+- **Port**: 5432
+- **Database**: chat_app
+- **User**: chat_app_user
+- **Password**: chat_app_password
 
-### Resource Limits
+### Database Setup Commands
 
-Default resource allocation:
+Create the database and user:
 
-**PostgreSQL:**
-- Requests: 256Mi RAM, 250m CPU
-- Limits: 512Mi RAM, 500m CPU
-
-**Chat Server:**
-- Requests: 256Mi RAM, 250m CPU
-- Limits: 512Mi RAM, 500m CPU
-
-Adjust in deployment files as needed.
-
-### Horizontal Pod Autoscaling
-
-Chat server automatically scales between 2-10 replicas based on:
-- CPU utilization: 70%
-- Memory utilization: 80%
-
-```bash
-# Check HPA status
-kubectl get hpa -n chat-app
-
-# Manually scale
-make scale-chatserver REPLICAS=5
+```sql
+CREATE DATABASE chat_app;
+CREATE USER chat_app_user WITH PASSWORD 'chat_app_password';
+GRANT ALL PRIVILEGES ON DATABASE chat_app TO chat_app_user;
 ```
 
-## 📊 Monitoring
-
-### Check Logs
+Check tables:
 
 ```bash
-# PostgreSQL logs
-make logs-postgres
-
-# Chat server logs
-make logs-chatserver
-
-# Or directly with kubectl
-kubectl logs -f deployment/chat-server -n chat-app
+psql "host=localhost port=5432 dbname=chat_app user=chat_app_user password=chat_app_password" -c "SELECT table_name FROM information_schema.tables WHERE table_schema='public';"
 ```
 
-### Database Access
+## 🎮 Running the Application
+
+### Start Android Emulator
 
 ```bash
-# Open psql shell
-make shell-postgres
-
-# Or manually
-kubectl exec -it deployment/postgres -n chat-app -- psql -U chat_app_user -d chat_app
-
-# Test connection
-make test-connection
+/path/to/Android/Sdk/emulator/emulator -avd Medium_Phone_API_36.1 &
 ```
 
-### Port Forwarding
-
+Or use the example path:
 ```bash
-# Forward PostgreSQL to localhost:5432
-make port-forward-postgres
-
-# Forward chat server to localhost:8080
-make port-forward-chatserver
-
-# Test with curl
-curl http://localhost:8080/health
+/home/tndat/Android/Sdk/emulator/emulator -avd Medium_Phone_API_36.1 &
 ```
 
-### View Events
+### Build and Install the Android App
 
+#### Option 1: Build and Install Separately
 ```bash
-# Recent events
-make events
-
-# Or directly
-kubectl get events -n chat-app --sort-by='.lastTimestamp'
-```
-
-### Describe Resources
-
-```bash
-# Describe all pods
-make describe-pods
-
-# Describe specific resource
-kubectl describe pod <pod-name> -n chat-app
-```
-
-## 💻 Development
-
-### Local Development Setup
-
-```bash
-# 1. Setup Android development
-export ANDROID_HOME=/path/to/Android/Sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-
-# 2. Start emulator
-$ANDROID_HOME/emulator/emulator -avd Medium_Phone_API_36.1 &
-
-# 3. Build APK
+# Build the APK
 ./gradlew assembleDebug
 
-# 4. Install and run
-./gradlew installDebug && \
-  adb shell am start -n com.example.myapplication/.ui.activity.LoginActivity
+# Install and launch
+./gradlew installDebug && adb shell am start -n com.example.myapplication/.MainActivity
 ```
 
-### Building C++ Server Locally
+#### Option 2: Clean Install with Launch
+```bash
+adb uninstall com.example.myapplication 2>/dev/null; \
+./gradlew installDebug && \
+adb shell am start -n com.example.myapplication/.ui.activity.LoginActivity
+```
+
+### Start the C++ Chat Server
 
 ```bash
-cd server-cpp
-mkdir build && cd build
-cmake ..
-make -j$(nproc)
+cd /path/to/mobile-chatting-app/server-cpp/build
 ./chat_server
 ```
 
-### Database Commands
-
+Or using the full path:
 ```bash
-# Connect to local PostgreSQL
-psql "host=localhost port=5432 dbname=chat_app user=chat_app_user password=chat_app_password"
-
-# List tables
-\dt
-
-# View schema
-\d+ users
+cd /home/tndat/mobile-chatting-app/server-cpp/build && ./chat_server
 ```
 
-### Uninstall App
+### Stop the Chat Server
+
+```bash
+pkill -9 chat_server
+```
+
+## 🔧 Development
+
+### Project Logs
+
+The application generates several log files for debugging:
+
+- `chat_server_run.log` - Chat server runtime logs
+- `server_run.log` - General server logs
+- `server.log` - Additional server information
+- `server.pid` - Process ID of running server
+
+### Clean Build
+
+To perform a clean build of the C++ server:
+
+```bash
+cd /home/tndat/mobile-chatting-app/server-cpp
+rm -rf build
+mkdir build
+cd build
+cmake ..
+make
+```
+
+### Android Build
+
+To build the Android debug APK:
+
+```bash
+./gradlew assembleDebug
+```
+
+### Uninstall Previous Version
+
+Before installing a new version:
 
 ```bash
 adb uninstall com.example.myapplication
 ```
 
-## 🔧 Troubleshooting
+## 🤝 Contributing
 
-### Common Issues
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-#### Pods Not Starting
-
-```bash
-# Check pod status
-kubectl get pods -n chat-app
-
-# Describe pod for events
-kubectl describe pod <pod-name> -n chat-app
-
-# Check logs
-kubectl logs <pod-name> -n chat-app
-```
-
-#### Database Connection Issues
-
-```bash
-# Verify PostgreSQL is running
-kubectl get pods -l app=postgres -n chat-app
-
-# Check service
-kubectl get svc postgres-service -n chat-app
-
-# Test connection from pod
-kubectl run -it --rm debug --image=postgres:15-alpine --restart=Never -n chat-app -- \
-  psql -h postgres-service -U chat_app_user -d chat_app
-```
-
-#### ImagePullBackOff
-
-```bash
-# Check if image exists
-docker pull your-registry/chat-server:latest
-
-# Verify image name in deployment
-kubectl get deployment chat-server -n chat-app -o yaml | grep image:
-
-# Check image pull secrets if using private registry
-kubectl get secrets -n chat-app
-```
-
-#### Persistent Volume Issues
-
-```bash
-# Check PV and PVC status
-kubectl get pv,pvc -n chat-app
-
-# Describe PVC
-kubectl describe pvc postgres-pvc -n chat-app
-
-# For Minikube, ensure storage directory exists
-minikube ssh "sudo mkdir -p /mnt/data/postgres"
-```
-
-### Reset Everything
-
-```bash
-# Delete all resources
-make delete
-
-# Clean Docker images
-make clean
-
-# Restart from scratch
-make deploy-all
-```
-
-## 📚 CKA Practice Topics
-
-This deployment covers the following CKA exam topics:
-
-### Core Concepts
-- ✅ Creating and configuring namespaces
-- ✅ Understanding Kubernetes API primitives
-- ✅ Managing pods, deployments, services
-
-### Configuration
-- ✅ ConfigMaps and Secrets
-- ✅ Resource requirements and limits
-- ✅ Environment variables
-
-### Multi-Container Pods
-- ✅ Init containers (wait-for-postgres)
-
-### Observability
-- ✅ Liveness and readiness probes
-- ✅ Container logging
-- ✅ Monitoring with kubectl
-
-### Services & Networking
-- ✅ ClusterIP services
-- ✅ LoadBalancer services
-- ✅ Ingress controllers
-- ✅ Network policies
-
-### Storage
-- ✅ PersistentVolumes (PV)
-- ✅ PersistentVolumeClaims (PVC)
-- ✅ Storage classes
-- ✅ Volume mounts
-
-### Workloads
-- ✅ Deployments with rolling updates
-- ✅ Jobs for database migrations
-- ✅ StatefulSets concepts
-- ✅ Horizontal Pod Autoscaler (HPA)
-
-### Cluster Architecture
-- ✅ Node management
-- ✅ Resource quotas
-- ✅ Label selectors
-
-### Troubleshooting
-- ✅ Debugging pod issues
-- ✅ Viewing logs
-- ✅ Executing commands in containers
-- ✅ Network troubleshooting
-
-## 📝 Makefile Commands
-
-```bash
-make help                    # Show all available commands
-make build-server           # Build Docker image
-make push-server            # Push image to registry
-make deploy-all             # Deploy everything
-make status                 # Check deployment status
-make logs-chatserver        # View server logs
-make logs-postgres          # View database logs
-make shell-postgres         # Open PostgreSQL shell
-make test-connection        # Test DB connection
-make scale-chatserver       # Scale server replicas
-make rollback-chatserver    # Rollback to previous version
-make delete                 # Delete all resources
-make clean                  # Clean everything
-```
-
-## 🔐 Security Considerations
-
-### Production Recommendations
-
-1. **Change Default Passwords**: Update all secrets with strong passwords
-2. **Enable TLS**: Configure SSL/TLS certificates for ingress
-3. **Network Policies**: Enable network policies to restrict traffic
-4. **RBAC**: Implement role-based access control
-5. **Pod Security**: Use pod security policies/standards
-6. **Image Scanning**: Scan Docker images for vulnerabilities
-7. **Secrets Management**: Consider using external secret managers (Vault, Sealed Secrets)
-
-### Example: Generate Secure Secrets
-
-```bash
-# Generate random password
-openssl rand -base64 32
-
-# Encode for Kubernetes
-echo -n 'your-password' | base64
-
-# Update secrets.yaml with new values
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-MIT License - See LICENSE file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
+## 👤 Author
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+**tndat-dev**
+
+- GitHub: [@tndat-dev](https://github.com/tndat-dev)
+
+## 🙏 Acknowledgments
+
+- Thanks to all contributors who have helped with this project
+- Special thanks to the Android and C++ communities for their excellent documentation
 
 ## 📞 Support
 
-- Create an issue on GitHub
-- Check troubleshooting section
-- Review Kubernetes documentation
-
-## 🎓 Learning Resources
-
-- [Kubernetes Documentation](https://kubernetes.io/docs/)
-- [CKA Exam Curriculum](https://github.com/cncf/curriculum)
-- [kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+If you encounter any issues or have questions, please file an issue on the [GitHub repository](https://github.com/tndat-dev/mobile-chatting-app/issues).
 
 ---
 
-**Note**: This is a learning project for CKA certification practice. For production use, implement additional security measures and high availability configurations.
+**Note**: This is a development project. Make sure to update security credentials and configurations before deploying to production.
