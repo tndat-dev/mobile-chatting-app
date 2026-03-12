@@ -1,4 +1,4 @@
-# Install script for directory: /home/tndat/mobile-chatting-app/app/src/main/cpp
+# Install script for directory: /home/tndat/Downloads/mobile-chatting-app/app/src/main/cpp
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/tndat/mobile-chatting-app/app/.cxx/Debug/52r702j2/armeabi-v7a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/tndat/Downloads/mobile-chatting-app/app/.cxx/Debug/52r702j2/armeabi-v7a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
