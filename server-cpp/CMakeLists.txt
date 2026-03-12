@@ -8,8 +8,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(include)
 
 # Find PostgreSQL
-find_package(PostgreSQL REQUIRED)
-include_directories(${PostgreSQL_INCLUDE_DIRS})
+if(UNIX AND NOT APPLE)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(POSTGRES REQUIRED libpq)
+    include_directories(${POSTGRES_INCLUDE_DIRS})
+    link_directories(${POSTGRES_LIBRARY_DIRS})
+    add_definitions(${POSTGRES_CFLAGS_OTHER})
+else()
+    find_package(PostgreSQL REQUIRED)
+    include_directories(${PostgreSQL_INCLUDE_DIRS})
+endif()
 
 # Source files
 set(SOURCES
@@ -31,6 +39,7 @@ if(UNIX)
   find_package(Threads REQUIRED)
   target_link_libraries(chat_server PRIVATE 
     Threads::Threads
+    ${POSTGRES_LIBRARIES}
     ${PostgreSQL_LIBRARIES}
   )
 endif()

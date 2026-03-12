@@ -40,5 +40,9 @@ COPY --from=builder /app/build/chat_server .
 ENV PORT=8080
 EXPOSE 8080
 
+# Run as non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
 # Entrypoint
 ENTRYPOINT ["./chat_server"]

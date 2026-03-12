@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: chat-server
-        image: tuandat309/chat-server
+        image: tuandat309/chat-server:latest
         ports:
         - containerPort: 8080
         env:
@@ -27,6 +27,23 @@ spec:
             secretKeyRef:
               name: chat-server-secret
               key: db-conn-str
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
         resources:
           requests:
             memory: "64Mi"

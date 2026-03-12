@@ -29,6 +29,23 @@ spec:
             secretKeyRef:
               name: postgres-secret
               key: postgres-password
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 30
+          periodSeconds: 20
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
         volumeMounts:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
