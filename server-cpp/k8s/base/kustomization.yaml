@@ -1,0 +1,19 @@
+resources:
+  - deployment.yaml
+  - service.yaml
+  - postgres-deployment.yaml
+  - postgres-service.yaml
+  - postgres-pvc.yaml
+
+secretGenerator:
+  - name: chat-server-secret
+    literals:
+      - db-conn-str="host=postgres-service port=5432 dbname=chat_app user=chat_app_user password=chat_app_password"
+  - name: postgres-secret
+    literals:
+      - postgres-password=chat_app_password
+
+configMapGenerator:
+  - name: postgres-schema-config
+    files:
+      - schema.sql

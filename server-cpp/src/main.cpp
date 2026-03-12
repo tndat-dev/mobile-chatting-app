@@ -15,6 +15,10 @@ int main() {
   // Initialize PostgreSQL persistence
   std::string conn_str = "host=localhost port=5432 dbname=chat_app "
                         "user=chat_app_user password=chat_app_password";
+                        
+  if (const char* env_conn_str = std::getenv("DB_CONN_STR")) {
+    conn_str = env_conn_str;
+  }
   
   auto pg_persistence = std::make_shared<persistence::PostgresPersistence>(conn_str);
   
@@ -103,10 +107,15 @@ int main() {
   int opt = 1;
   setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
+  int port = 8080;
+  if (const char* env_port = std::getenv("PORT")) {
+    port = std::stoi(env_port);
+  }
+
   sockaddr_in addr{};
   addr.sin_family = AF_INET;
   addr.sin_addr.s_addr = INADDR_ANY;
-  addr.sin_port = htons(8080);
+  addr.sin_port = htons(port);
   
   if (bind(server_fd, (sockaddr*)&addr, sizeof(addr)) < 0) {
     perror("bind");
@@ -118,7 +127,7 @@ int main() {
     return 1;
   }
 
-  std::cout << "[C++ SERVER] Listening on 0.0.0.0:8080" << std::endl;
+  std::cout << "[C++ SERVER] Listening on 0.0.0.0:" << port << std::endl;
 
   // Accept connections
   while (true) {
