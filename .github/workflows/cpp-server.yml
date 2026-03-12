@@ -1,0 +1,25 @@
+name: C++ Server CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential libpq-dev
+
+    - name: Configure CMake
+      run: cmake -S server-cpp -B server-cpp/build
+
+    - name: Build
+      run: cmake --build server-cpp/build

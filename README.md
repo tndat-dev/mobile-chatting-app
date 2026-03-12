@@ -104,4 +104,19 @@ make -j$(nproc)
 ```
 
 ---
+
+## 🚀 CI/CD (GitHub Actions)
+
+The project includes automated workflows for continuous integration and delivery:
+
+- **Android CI**: Builds the Android app and runs unit tests on every push to `main`.
+- **C++ Server CI**: Builds the C++ server using CMake and verifies compilation.
+- **Kubernetes Lint**: Uses `kube-linter` to check Kubernetes manifests for best practices.
+- **Docker Build**: Automates Docker image creation for the C++ server.
+
+You can find the workflow definitions in [`.github/workflows/`](file:///home/tndat/Downloads/mobile-chatting-app/.github/workflows/).
+
+---
+
+---
 **Author:** tndat-dev
