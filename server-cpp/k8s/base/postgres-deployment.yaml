@@ -29,6 +29,14 @@ spec:
             secretKeyRef:
               name: postgres-secret
               key: postgres-password
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 999
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
         readinessProbe:
           tcpSocket:
             port: 5432

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: chat-server
-        image: tuandat309/chat-server:latest
+        image: tuandat309/chat-server:v1.0.0
         ports:
         - containerPort: 8080
         env:
