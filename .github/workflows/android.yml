@@ -25,8 +25,13 @@ jobs:
 
     - name: Install Android SDK components
       run: |
+        SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+        if [ -z "$SDK_ROOT" ]; then
+          SDK_ROOT="$(dirname "$(dirname "$(dirname "$(dirname "$(command -v sdkmanager)")")")")"
+        fi
+        echo "Using SDK root: $SDK_ROOT"
         yes | sdkmanager --licenses || true
-        sdkmanager \
+        sdkmanager --sdk_root="$SDK_ROOT" \
           "platform-tools" \
           "platforms;android-34" \
           "build-tools;34.0.0" \
@@ -35,8 +40,14 @@ jobs:
 
     - name: Configure Android SDK path for CI
       run: |
+        SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+        if [ -z "$SDK_ROOT" ]; then
+          SDK_ROOT="$(dirname "$(dirname "$(dirname "$(dirname "$(command -v sdkmanager)")")")")"
+        fi
+        echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+        echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
         rm -f local.properties
-        echo "sdk.dir=$ANDROID_HOME" > local.properties
+        echo "sdk.dir=$SDK_ROOT" > local.properties
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
