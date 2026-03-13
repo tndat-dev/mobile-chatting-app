@@ -21,8 +21,33 @@ int main() {
   }
   
   auto pg_persistence = std::make_shared<persistence::PostgresPersistence>(conn_str);
-  
-  if (!pg_persistence->initialize()) {
+
+  int db_connect_retries = 10;
+  if (const char* env_retries = std::getenv("DB_CONNECT_RETRIES")) {
+    db_connect_retries = std::max(1, std::stoi(env_retries));
+  }
+
+  int db_connect_retry_delay_seconds = 2;
+  if (const char* env_retry_delay = std::getenv("DB_CONNECT_RETRY_DELAY_SECONDS")) {
+    db_connect_retry_delay_seconds = std::max(1, std::stoi(env_retry_delay));
+  }
+
+  bool db_connected = false;
+  for (int attempt = 1; attempt <= db_connect_retries; ++attempt) {
+    if (pg_persistence->initialize()) {
+      db_connected = true;
+      break;
+    }
+
+    if (attempt < db_connect_retries) {
+      std::cerr << "[C++ SERVER] PostgreSQL connect attempt " << attempt
+                << " failed, retrying in " << db_connect_retry_delay_seconds
+                << "s..." << std::endl;
+      std::this_thread::sleep_for(std::chrono::seconds(db_connect_retry_delay_seconds));
+    }
+  }
+
+  if (!db_connected) {
     std::cerr << "[C++ SERVER] Failed to connect to PostgreSQL database" << std::endl;
     std::cerr << "[C++ SERVER] Falling back to file-based persistence" << std::endl;
     
