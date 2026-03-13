@@ -31,6 +31,10 @@ sudo microk8s kubectl apply -k k8s/overlays/dev
 ### 3. Order of Initialization
 1. **PostgreSQL**: Deploys first. It uses `schema.sql` (mounted via ConfigMap) to automatically create tables and seed data (`alice`, `dat`).
 2. **Backend**: Deploys after. It connects to the database using environmental variables provided by Kubernetes Secrets.
+    - Startup includes PostgreSQL retry logic to tolerate transient DNS/service readiness issues.
+    - Optional env vars:
+       - `DB_CONNECT_RETRIES` (default: `10`)
+       - `DB_CONNECT_RETRY_DELAY_SECONDS` (default: `2`)
 
 ### 4. Verification
 Check if all pods are running:
@@ -109,12 +113,16 @@ make -j$(nproc)
 
 The project includes automated workflows for continuous integration and delivery:
 
+![Android CI](https://github.com/tndat-dev/mobile-chatting-app/actions/workflows/android.yml/badge.svg?branch=main)
+![C++ Server CI](https://github.com/tndat-dev/mobile-chatting-app/actions/workflows/cpp-server.yml/badge.svg?branch=main)
+![Kubernetes Lint](https://github.com/tndat-dev/mobile-chatting-app/actions/workflows/k8s-lint.yml/badge.svg?branch=main)
+
 - **Android CI**: Builds the Android app and runs unit tests on every push to `main`.
 - **C++ Server CI**: Builds the C++ server using CMake and verifies compilation.
 - **Kubernetes Lint**: Uses `kube-linter` to check Kubernetes manifests for best practices.
-- **Docker Build**: Automates Docker image creation for the C++ server.
+- **Docker Build**: Runs on tag pushes (`v*`) or manual dispatch (`workflow_dispatch`).
 
-You can find the workflow definitions in [`.github/workflows/`](file:///home/tndat/Downloads/mobile-chatting-app/.github/workflows/).
+You can find the workflow definitions in `.github/workflows/`.
 
 ---
 
