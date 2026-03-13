@@ -14,6 +14,18 @@ spec:
       labels:
         app: chat-server
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - chat-server
+              topologyKey: kubernetes.io/hostname
       containers:
       - name: chat-server
         image: tuandat309/chat-server:v1.0.0
@@ -30,6 +42,7 @@ spec:
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
+          readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           capabilities:
             drop:
