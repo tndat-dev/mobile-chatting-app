@@ -33,6 +33,11 @@ jobs:
           "cmake;3.22.1" \
           "ndk;26.1.10909125"
 
+    - name: Configure Android SDK path for CI
+      run: |
+        rm -f local.properties
+        echo "sdk.dir=$ANDROID_HOME" > local.properties
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
