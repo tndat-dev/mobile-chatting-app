@@ -85,6 +85,6 @@ class SessionManager private constructor(context: Context) {
     }
     
     fun getServerPort(): Int {
-        return sharedPreferences.getInt(KEY_SERVER_PORT, 8080)
+        return sharedPreferences.getInt(KEY_SERVER_PORT, 30080)
     }
 }

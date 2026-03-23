@@ -7,45 +7,43 @@ Runbook nay gom cac lenh da dung de khoi dong lai toan bo flow tu dau, theo huon
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app
 microk8s kubectl get pods -l app=chat-server -o wide
+microk8s kubectl get pods -l app=postgres -o wide
+microk8s kubectl get statefulset dev-postgres || true
 microk8s kubectl logs -l app=chat-server --tail=80
 microk8s kubectl get svc -A
 ```
 
 Ky vong:
 - Pod `chat-server` o trang thai `Running`
+- Pod `postgres` o trang thai `Running`
 - Service `dev-chat-server-service` expose cong `8080`
 
 ## 1.5. Build Docker image va deploy backend len K8s
 
-Neu can rebuild backend image truoc khi chay app, dung 1 trong 2 huong duoi day.
+Flow da duoc verify tren may nay theo huong local MicroK8s registry. Day la cach nen dung neu muon chay tu dau that su.
 
-### Cach A. Build image moi, push registry, roi cap nhat deployment
+### Cach A. Khuyen dung tren may nay: build image va push vao local registry cua MicroK8s
 
-Manifest hien tai dang tro vao image dang public:
-
-```bash
-tuandat309/chat-server:v1.0.0
-```
-
-Build image moi:
+Build image backend:
 
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app/server-cpp
-docker build -t tuandat309/chat-server:v1.0.1 .
+docker build -t chat-server:runbook-verify .
 ```
 
-Push image len registry:
+Tag va push vao local registry:
 
 ```bash
-docker push tuandat309/chat-server:v1.0.1
+docker tag chat-server:runbook-verify localhost:32000/chat-server:runbook-verify
+docker push localhost:32000/chat-server:runbook-verify
 ```
 
-Cap nhat deployment de dung image moi:
+Cap nhat deployment de dung image vua push:
 
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app
-microk8s kubectl set image deployment/dev-chat-server chat-server=tuandat309/chat-server:v1.0.1
-microk8s kubectl rollout status deployment/dev-chat-server
+microk8s kubectl set image deployment/dev-chat-server chat-server=localhost:32000/chat-server:runbook-verify
+microk8s kubectl rollout status deployment/dev-chat-server --timeout=240s
 ```
 
 Kiem tra image dang chay:
@@ -55,22 +53,22 @@ microk8s kubectl get deployment dev-chat-server -o jsonpath='{.spec.template.spe
 echo
 ```
 
-### Cach B. Deploy lai overlay hien co
+### Cach B. Apply lai overlay dev
 
-Neu khong doi image, chi can apply lai manifest dev overlay:
+Neu chi muon apply lai manifest dev overlay:
 
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app/server-cpp
 microk8s kubectl apply -k k8s/overlays/dev
-microk8s kubectl rollout status deployment/dev-chat-server
+microk8s kubectl rollout status deployment/dev-chat-server --timeout=240s
 ```
 
-Neu muon force rollout du image tag khong doi:
+Neu muon force rollout khi image khong doi:
 
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app
 microk8s kubectl rollout restart deployment/dev-chat-server
-microk8s kubectl rollout status deployment/dev-chat-server
+microk8s kubectl rollout status deployment/dev-chat-server --timeout=240s
 ```
 
 Kiem tra pod sau deploy:
@@ -80,43 +78,112 @@ microk8s kubectl get pods -l app=chat-server -o wide
 microk8s kubectl logs -l app=chat-server --tail=80
 ```
 
-## 2. Giai phong cong 8080 neu dang co backend local chiem
+### Luu y quan trong
 
-Neu truoc do da chay `chat_server` local, dung no de danh `8080` cho `kubectl port-forward`:
+- Image public `tuandat309/chat-server:v1.0.0` hien tai khong reliable tren may nay. Pod moi co the bi `ImagePullBackOff` voi loi `unexpected media type text/html`.
+- Vi vay, de chay chac chan tren MicroK8s local, uu tien local registry `localhost:32000` nhu Cach A.
+
+## 1.6. Deploy PostgreSQL bang StatefulSet (recommended)
+
+PostgreSQL giờ được deploy chính thức bằng StatefulSet (tra file: `server-cpp/k8s/base/postgres-statefulset.yaml`):
 
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app
-ss -ltnp | grep ':8080' || true
-pkill -f '/chat_server| chat_server' || true
-ss -ltnp | grep ':8080' || true
+microk8s kubectl apply -k server-cpp/k8s/overlays/dev
+microk8s kubectl get pods -l app=postgres -w
 ```
 
-## 3. Forward backend K8s ve may host
+Nếu cần clean slate (xóa StatefulSet & data cũ):
 
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app
+microk8s kubectl delete statefulset dev-postgres --ignore-not-found
+microk8s kubectl delete pvc dev-postgres-pvc --ignore-not-found
+sudo rm -rf /var/snap/microk8s/common/default-storage/default-dev-postgres-pvc*
+microk8s kubectl apply -k server-cpp/k8s/overlays/dev
+```
+
+Apply schema từ ConfigMap:
+
+```bash
+cat > /tmp/apply-schema.yaml << 'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-init
+spec:
+  containers:
+  - name: postgres-client
+    image: postgres:15
+    command: ["psql"]
+    args: ["-h", "dev-postgres-service", "-U", "chat_app_user", "-d", "chat_app_dev", "-f", "/schema.sql"]
+    env:
+    - name: PGPASSWORD
+      value: "chat_app_password"
+    volumeMounts:
+    - name: schema-volume
+      mountPath: /schema.sql
+      subPath: schema.sql
+  volumes:
+  - name: schema-volume
+    configMap:
+      name: dev-postgres-schema-config
+  restartPolicy: Never
+EOF
+
+microk8s kubectl delete pod postgres-init --ignore-not-found
+microk8s kubectl apply -f /tmp/apply-schema.yaml
+microk8s kubectl get pod postgres-init
+```
+
+Don pod chat-server cu bi loi pull image (neu con):
+
+```bash
+microk8s kubectl get pods -l app=chat-server
+microk8s kubectl get pods -l app=chat-server | awk '/ImagePullBackOff|ErrImagePull/{print $1}' | xargs -r microk8s kubectl delete pod
+```
+
+## 2. Giai phong cong 30080 neu dang co tien trinh local chiem
+
+NodePort `30080` la cach on dinh tren may nay (tranh loi TLS khi `kubectl port-forward`):
+
+```bash
+cd /home/tndat/Downloads/mobile-chatting-app
+ss -ltnp | grep ':30080' || true
+```
+
+## 3. Expose backend qua NodePort 30080
+
+```bash
+cd /home/tndat/Downloads/mobile-chatting-app
+microk8s kubectl patch svc dev-chat-server-service -p '{"spec":{"type":"NodePort","ports":[{"port":8080,"protocol":"TCP","targetPort":8080,"nodePort":30080}]}}'
+microk8s kubectl get svc dev-chat-server-service -o wide
+```
+
+Neu can quay ve cach cu (port-forward), co the dung:
+
+```bash
 microk8s kubectl port-forward -n default svc/dev-chat-server-service 8080:8080
 ```
 
-Lenh nay can duoc giu chay o 1 terminal rieng.
-
-## 4. Smoke test backend qua localhost:8080
+## 4. Smoke test backend qua localhost:30080
 
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app
 printf '1
 0
-' | server-cpp/build/test_client 127.0.0.1 8080
+' | server-cpp/build/test_client 127.0.0.1 30080
 ```
 
 Ky vong:
-- `Connected to server 127.0.0.1:8080`
+- `Connected to server 127.0.0.1:30080`
 - Response `type=240`
 
 ## 5. Build app Android
 
 ```bash
 cd /home/tndat/Downloads/mobile-chatting-app
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ./gradlew :app:assembleDebug --no-daemon
 ```
 
@@ -167,30 +234,36 @@ adb shell monkey -p com.example.myapplication -c android.intent.category.LAUNCHE
 
 Tai man hinh login:
 - Host: `10.0.2.2`
-- Port: `8080`
+- Port: `30080`
 
 Giai thich:
 - Tu emulator, `10.0.2.2` tro ve may host
-- Tren host, `8080` dang duoc forward vao `svc/dev-chat-server-service`
+- Tren host, `30080` la NodePort map vao `svc/dev-chat-server-service:8080`
 
 Luong ket noi thuc te:
 
 ```text
-Android app -> 10.0.2.2:8080 -> kubectl port-forward -> dev-chat-server-service -> chat-server pod
+Android app -> 10.0.2.2:30080 -> NodePort service -> dev-chat-server-service -> chat-server pod
 ```
+
+### Xac nhan da verify thanh cong
+
+- App da ket noi thanh cong vao backend K8s qua `10.0.2.2:8080`
+- Dang ky user moi `runuser313` da thanh cong va app da di vao man hinh chinh
+- Neu login bang tai khoan seed that bai, uu tien dang ky user moi thay vi tin vao thong tin cu trong tai lieu
 
 ## 10. Lenh kiem tra nhanh khi gap loi
 
-Kiem tra ai dang giu cong 8080:
+Kiem tra ai dang giu cong 30080:
 
 ```bash
-ss -ltnp | grep ':8080' || true
+ss -ltnp | grep ':30080' || true
 ```
 
-Kiem tra port-forward con song:
+Kiem tra service NodePort:
 
 ```bash
-pgrep -af 'kubectl port-forward.*dev-chat-server-service' || true
+microk8s kubectl get svc dev-chat-server-service -o wide
 ```
 
 Kiem tra log backend:

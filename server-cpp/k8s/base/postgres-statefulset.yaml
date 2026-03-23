@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dev-postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: microk8s-hostpath
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-postgres-service
+spec:
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dev-postgres
+spec:
+  serviceName: dev-postgres-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+          name: postgres
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "chat_app_password"
+        - name: POSTGRES_DB
+          value: "chat_app_dev"
+        - name: POSTGRES_USER
+          value: "chat_app_user"
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        livenessProbe:
+          exec:
+            command: ["/bin/sh", "-c", "pg_isready -U chat_app_user -d chat_app_dev"]
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command: ["/bin/sh", "-c", "pg_isready -U chat_app_user -d chat_app_dev"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: dev-postgres-pvc
