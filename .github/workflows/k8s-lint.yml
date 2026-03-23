@@ -11,13 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run kube-linter
-        uses: stackrox/kube-linter-action@v1
-        with:
-          directory: server-cpp/k8s/base
-          config: server-cpp/k8s/.kube-linter.yaml
+      - name: Run kube-linter (base)
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/work" \
+            stackrox/kube-linter:latest \
+            lint --config /work/server-cpp/k8s/.kube-linter.yaml /work/server-cpp/k8s/base
+
       - name: Run kube-linter (overlays)
-        uses: stackrox/kube-linter-action@v1
-        with:
-          directory: server-cpp/k8s/overlays
-          config: server-cpp/k8s/.kube-linter.yaml
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/work" \
+            stackrox/kube-linter:latest \
+            lint --config /work/server-cpp/k8s/.kube-linter.yaml /work/server-cpp/k8s/overlays
