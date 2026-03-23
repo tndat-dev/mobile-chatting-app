@@ -15,7 +15,9 @@ jobs:
         uses: stackrox/kube-linter-action@v1
         with:
           directory: server-cpp/k8s/base
+          config: server-cpp/k8s/.kube-linter.yaml
       - name: Run kube-linter (overlays)
         uses: stackrox/kube-linter-action@v1
         with:
           directory: server-cpp/k8s/overlays
+          config: server-cpp/k8s/.kube-linter.yaml
