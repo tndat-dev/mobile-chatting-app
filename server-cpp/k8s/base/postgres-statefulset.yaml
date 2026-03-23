@@ -2,6 +2,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: dev-postgres-pvc
+  labels:
+    app: postgres
 spec:
   accessModes:
     - ReadWriteOnce
@@ -52,9 +54,26 @@ spec:
           value: "chat_app_user"
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        securityContext:
+          runAsNonRoot: false
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
         volumeMounts:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
+        - name: postgres-run
+          mountPath: /run/postgresql
+        - name: postgres-tmp
+          mountPath: /tmp
         livenessProbe:
           exec:
             command: ["/bin/sh", "-c", "pg_isready -U chat_app_user -d chat_app_dev"]
@@ -69,3 +88,9 @@ spec:
       - name: postgres-storage
         persistentVolumeClaim:
           claimName: dev-postgres-pvc
+      - name: postgres-run
+        emptyDir:
+          sizeLimit: 100Mi
+      - name: postgres-tmp
+        emptyDir:
+          sizeLimit: 100Mi
