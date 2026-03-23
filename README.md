@@ -129,7 +129,6 @@ The project includes automated workflows for continuous integration and delivery
 - **Android CI**: Builds the Android app and runs unit tests on every push to `main`.
 - **C++ Server CI**: Builds the C++ server using CMake and verifies compilation.
 - **Kubernetes Lint**: Uses `kube-linter` to check Kubernetes manifests for best practices.
-- **Docker Build**: Runs on tag pushes (`v*`) or manual dispatch (`workflow_dispatch`).
 
 You can find the workflow definitions in `.github/workflows/`.
 
