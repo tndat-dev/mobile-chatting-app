@@ -1,10 +1,6 @@
 checks:
   doNotAutoAddDefaults: false
-  addAllBuiltIn: true
-
-excludedChecks:
-  # PostgreSQL requires root privileges and filesystem write access
-  - no-read-only-root-fs
-  - run-as-non-root
-  # Schema validation requires internet access in CI
-  - schema-validation
+  exclude:
+    - no-read-only-root-fs
+    - run-as-non-root
+    - schema-validation
